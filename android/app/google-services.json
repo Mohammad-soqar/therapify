@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "727314379379",
+    "project_id": "therapify-95c5b",
+    "storage_bucket": "therapify-95c5b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:727314379379:android:4f62dac978bd0df0e33006",
+        "android_client_info": {
+          "package_name": "com.company.therapify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1dGz-ka1VCvdLQiLrmDWCEzXKtkU9h0g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
