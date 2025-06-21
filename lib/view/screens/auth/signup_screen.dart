@@ -1,10 +1,19 @@
+// lib/view/screens/auth/sign_up_screen.dart
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_code_picker/country_code_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:therapify/data/models/patient.dart';
+import 'package:therapify/data/models/user.dart';
+import 'package:therapify/data/services/patient_service.dart';
+import 'package:therapify/data/services/user_service.dart';
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/utils/utils.dart';
+import 'package:therapify/view/screens/home/home_screen.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/input_decoration.dart';
 import 'package:therapify/view/widgets/spacing.dart';
@@ -18,22 +27,89 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
-  final TextEditingController _phoneNumberController = TextEditingController();
+  final _formKey       = GlobalKey<FormState>();
+  final _nameCtrl      = TextEditingController();
+  final _emailCtrl     = TextEditingController();
+  final _passwordCtrl  = TextEditingController();
+  final _confirmCtrl   = TextEditingController();
+  final _phoneCtrl     = TextEditingController();
+
   bool _obscurePassword = true;
   String initialCountry = 'RU';
-  String phoneCode = '+7';
-  bool isSeller = false;
+  String phoneCode      = '+7';
+
+  final _genders        = ['Male', 'Female', 'Other'];
+  final _languages      = ['English', 'Türkçe', 'العربية'];
+  String _selectedGender   = 'Male';
+  String _selectedLanguage = 'English';
+
+  final _patientService = PatientService();
+  final _userService    = UserService();
 
   void _togglePasswordVisibility() {
-    setState(() {
-      _obscurePassword = !_obscurePassword;
-    });
+    setState(() => _obscurePassword = !_obscurePassword);
   }
+
+  Future<void> _onSignUpPressed() async {
+  if (!_formKey.currentState!.validate()) return;
+
+  try {
+    // 1️⃣ Create the Auth user
+    final cred = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+          email: _emailCtrl.text.trim(),
+          password: _passwordCtrl.text,
+        );
+
+    final user = cred.user;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'NO_USER',
+        message: 'Failed to create user credential.',
+      );
+    }
+    final uid = user.uid;
+
+    // 2️⃣ Save UserModel
+    await _userService.saveUser(
+      UserModel(
+        name:        _nameCtrl.text.trim(),
+        dob:         DateTime.now(),
+        phoneNumber: '$phoneCode${_phoneCtrl.text.trim()}',
+        role:        'patient',
+        gender:      _selectedGender,
+        email:       _emailCtrl.text.trim(),
+        country:     initialCountry,
+        language:    _selectedLanguage,
+      ),
+      uid,
+    );
+
+    // 3️⃣ Save PatientModel
+    await _patientService.savePatient(
+      PatientModel(patientId: uid),
+      uid,
+    );
+
+    // 4️⃣ Navigate (normal navigation, not named)
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => HomeScreen()),
+    );
+  } catch (e, st) {
+    debugPrint('🔥 SignUp error: $e\n$st');
+
+    final String errorMsg = e is FirebaseAuthException
+        ? (e.message ?? e.code)
+        : e.toString();
+
+    Get.snackbar(
+      'Sign Up Error',
+      errorMsg,
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -43,116 +119,77 @@ class _SignUpScreenState extends State<SignUpScreen> {
           padding: EdgeInsets.symmetric(horizontal: 30.r),
           margin: EdgeInsets.only(top: 100.h),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "Therapify",
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
+              Text("Therapify", style: Theme.of(context).textTheme.titleLarge),
               const VSpace(10),
               const Text("Enter your details to create an account!"),
               const VSpace(50),
               Form(
                 key: _formKey,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // Full Name
                     const Text("Full Name"),
                     VSpace(8.h),
                     TextFormField(
-                      controller: _nameController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter first name';
-                        }
-                        return null;
-                      },
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      controller: _nameCtrl,
+                      validator: (v) => (v?.isEmpty ?? true) ? 'Enter name' : null,
                       decoration: AppInputDecoration.roundInputDecoration(
                         context: context,
                         hintText: 'Full Name',
                       ),
                     ),
+
+                    // Email
                     const VSpace(20),
                     const Text("Email Address"),
                     VSpace(8.h),
                     TextFormField(
-                      controller: _emailController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        bool isValidEmail = RegExp(
-                          r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$',
-                        ).hasMatch(value);
-
-                        if (!isValidEmail) {
-                          return 'Please enter a valid email address';
-                        }
-                        return null;
+                      controller: _emailCtrl,
+                      validator: (v) {
+                        if (v?.isEmpty ?? true) return 'Enter email';
+                        final re = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
+                        return re.hasMatch(v!) ? null : 'Invalid email';
                       },
-                      style: Theme.of(context).textTheme.bodyMedium,
                       decoration: AppInputDecoration.roundInputDecoration(
                         context: context,
                         hintText: 'Email Address',
                       ),
                     ),
+
+                    // Phone
                     const VSpace(20),
                     const Text("Phone Number"),
                     VSpace(8.h),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: AppColors.getBorderColor(), width: 1.0),
-                              borderRadius: BorderRadius.circular(10.r)),
                           width: 130.w,
                           height: 52.h,
-                          padding: EdgeInsets.zero,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: AppColors.getBorderColor()),
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
                           child: CountryCodePicker(
-                            onChanged: (CountryCode countryCode) {
-                              phoneCode = countryCode.dialCode.toString();
-                              initialCountry = countryCode.code.toString();
-                              debugPrint("phoneCode $phoneCode");
-                              debugPrint("initialCountry $initialCountry");
+                            onChanged: (cc) {
+                              phoneCode      = cc.dialCode ?? phoneCode;
+                              initialCountry = cc.code ?? initialCountry;
                             },
-                            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 7.h),
                             initialSelection: initialCountry,
-                            favorite: const ['+39', 'FR'],
-                            showCountryOnly: false,
-                            showOnlyCountryWhenClosed: false,
-                            alignLeft: true,
                             boxDecoration: BoxDecoration(
                               color: AppColors.getContainerColor(),
                               borderRadius: BorderRadius.circular(10.r),
                               boxShadow: Utils.defaultBoxShadow(),
                             ),
-                            textStyle: Theme.of(context).textTheme.bodyMedium,
-                            searchStyle: Theme.of(context).textTheme.bodyMedium,
-                            dialogTextStyle: Theme.of(context).textTheme.bodyMedium,
-                            closeIcon: Icon(Ionicons.close_outline, size: 22.sp, color: AppColors.getTextColor()),
-                            searchDecoration: AppInputDecoration.roundInputDecoration(
-                              context: context,
-                              hintText: 'Search',
-                            ),
                           ),
                         ),
                         const HSpace(10),
-                        Flexible(
+                        Expanded(
                           child: TextFormField(
-                            controller: _phoneNumberController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'This field can not be empty';
-                              }
-                              return null;
-                            },
+                            controller: _phoneCtrl,
                             keyboardType: TextInputType.number,
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            validator: (v) => (v?.isEmpty ?? true) ? 'Enter phone' : null,
                             decoration: AppInputDecoration.roundInputDecoration(
                               context: context,
                               hintText: 'Phone',
@@ -161,173 +198,95 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ],
                     ),
+
+                    // Gender
+                    const VSpace(20),
+                    const Text("Gender"),
+                    VSpace(8.h),
+                    DropdownButtonFormField<String>(
+                      value: _selectedGender,
+                      decoration: AppInputDecoration.roundInputDecoration(
+                        context: context,
+                        hintText: 'Select Gender',
+                      ),
+                      items: _genders
+                          .map((g) => DropdownMenuItem(value: g, child: Text(g)))
+                          .toList(),
+                      onChanged: (val) {
+                        if (val != null) setState(() => _selectedGender = val);
+                      },
+                    ),
+
+                    // Language
+                    const VSpace(20),
+                    const Text("Preferred Language"),
+                    VSpace(8.h),
+                    DropdownButtonFormField<String>(
+                      value: _selectedLanguage,
+                      decoration: AppInputDecoration.roundInputDecoration(
+                        context: context,
+                        hintText: 'Select Language',
+                      ),
+                      items: _languages
+                          .map((l) => DropdownMenuItem(value: l, child: Text(l)))
+                          .toList(),
+                      onChanged: (val) {
+                        if (val != null) setState(() => _selectedLanguage = val);
+                      },
+                    ),
+
+                    // Password
                     const VSpace(20),
                     const Text("Password"),
                     VSpace(8.h),
                     TextFormField(
-                      controller: _passwordController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        return null;
-                      },
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      controller: _passwordCtrl,
+                      obscureText: _obscurePassword,
+                      validator: (v) => (v?.isEmpty ?? true) ? 'Enter password' : null,
                       decoration: AppInputDecoration.roundInputDecoration(
                         context: context,
                         hintText: 'Password',
                         suffixIcon: IconButton(
-                          icon: Image.asset(
-                            _obscurePassword ? "assets/icons/eye_close.png" : "assets/icons/eye_open.png",
-                            color: AppColors.getTextColor2(),
-                            width: 18.w,
-                          ),
+                          icon: Icon(_obscurePassword
+                              ? Ionicons.eye_off_outline
+                              : Ionicons.eye_outline),
                           onPressed: _togglePasswordVisibility,
                         ),
                       ),
-                      obscureText: _obscurePassword,
                     ),
+
+                    // Confirm Password
                     const VSpace(20),
                     const Text("Confirm Password"),
                     VSpace(8.h),
                     TextFormField(
-                      controller: _confirmPasswordController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        } else if (value != _passwordController.text) {
-                          return 'Passwords do not match';
-                        }
+                      controller: _confirmCtrl,
+                      obscureText: _obscurePassword,
+                      validator: (v) {
+                        if ((v?.isEmpty ?? true)) return 'Confirm password';
+                        if (v != _passwordCtrl.text) return 'Passwords do not match';
                         return null;
                       },
-                      style: Theme.of(context).textTheme.bodyMedium,
                       decoration: AppInputDecoration.roundInputDecoration(
                         context: context,
                         hintText: 'Confirm Password',
                         suffixIcon: IconButton(
-                          icon: Image.asset(
-                            _obscurePassword ? "assets/icons/eye_close.png" : "assets/icons/eye_open.png",
-                            color: AppColors.getTextColor2(),
-                            width: 18.w,
-                          ),
+                          icon: Icon(_obscurePassword
+                              ? Ionicons.eye_off_outline
+                              : Ionicons.eye_outline),
                           onPressed: _togglePasswordVisibility,
                         ),
                       ),
-                      obscureText: _obscurePassword,
                     ),
+
+                    // Sign Up Button
                     const VSpace(25),
                     AppButton(
                       title: "Sign Up".tr,
                       height: 50.h,
-                      width: double.infinity,
-                      bgColor: AppColors.primaryColor,
-                      onPress: () {
-                        if (_formKey.currentState!.validate()) {
-                          // authController.signUp(
-                          //   isSeller ? "1" : "0",
-                          //   _firstnameController.text,
-                          //   _lastnameController.text,
-                          //   _usernameController.text,
-                          //   _emailController.text,
-                          //   phoneCode,
-                          //   _phoneNumberController.text,
-                          //   _passwordController.text,
-                          // );
-                        }
-                      },
+                      onPress: _onSignUpPressed,
+                      bgColor: Colors.blue,
                     ),
-                    VSpace(20.h),
-                    Stack(
-                      children: [
-                        Divider(
-                          height: 50.h,
-                          color: AppColors.getBorderColor(),
-                          thickness: 1,
-                        ),
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          bottom: 14,
-                          child: Center(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20.w),
-                              color: AppColors.getBackgroundColor(),
-                              child: const Text("Or sign in with"),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    VSpace(20.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          child: Container(
-                            padding: EdgeInsets.all(10.r),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: AppColors.getBorderColor(),
-                              ),
-                              borderRadius: BorderRadius.circular(25.r),
-                            ),
-                            child: Image.asset(
-                              "assets/icons/facebook.png",
-                              width: 18.r,
-                            ),
-                          ),
-                        ),
-                        HSpace(20.w),
-                        InkWell(
-                          child: Container(
-                            padding: EdgeInsets.all(10.r),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: AppColors.getBorderColor(),
-                              ),
-                              borderRadius: BorderRadius.circular(25.r),
-                            ),
-                            child: Image.asset(
-                              "assets/icons/google.png",
-                              width: 18.r,
-                            ),
-                          ),
-                        ),
-                        HSpace(20.w),
-                        InkWell(
-                          child: Container(
-                            padding: EdgeInsets.all(10.r),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: AppColors.getBorderColor(),
-                              ),
-                              borderRadius: BorderRadius.circular(25.r),
-                            ),
-                            child: Image.asset(
-                              "assets/icons/twitter.png",
-                              width: 18.r,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    VSpace(30.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("Already have an account? "),
-                        InkWell(
-                          onTap: () {
-                            Get.back();
-                          },
-                          child: Text(
-                            "Sign In".tr,
-                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.primaryColor),
-                          ),
-                        )
-                      ],
-                    ),
-                    VSpace(30.h),
                   ],
                 ),
               ),
