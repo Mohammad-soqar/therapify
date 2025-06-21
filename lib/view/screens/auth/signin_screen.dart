@@ -1,9 +1,10 @@
-import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/view/screens/forgot_password/password_reset_email.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/view/screens/forgot_password/password_reset_email.dart';
+import 'package:therapify/view/screens/doctor_dashboard/doctor_dashboard_view.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/input_decoration.dart';
 import 'package:therapify/view/widgets/spacing.dart';
@@ -27,12 +28,6 @@ class _SignInScreenState extends State<SignInScreen> {
     setState(() {
       _obscurePassword = !_obscurePassword;
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // languageData = languageController.getStoredData();
   }
 
   @override
@@ -93,7 +88,9 @@ class _SignInScreenState extends State<SignInScreen> {
                         suffixIcon: IconButton(
                           onPressed: _togglePasswordVisibility,
                           icon: Image.asset(
-                            _obscurePassword ? "assets/icons/eye_close.png" : "assets/icons/eye_open.png",
+                            _obscurePassword
+                                ? "assets/icons/eye_close.png"
+                                : "assets/icons/eye_open.png",
                             color: AppColors.getTextColor2(),
                             width: 18.w,
                           ),
@@ -112,9 +109,12 @@ class _SignInScreenState extends State<SignInScreen> {
                               child: Checkbox(
                                 checkColor: AppColors.whiteColor,
                                 activeColor: AppColors.primaryColor,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3.r)),
-                                visualDensity: const VisualDensity(horizontal: -4.0, vertical: -4.0), // adjust padding
-                                side: BorderSide(color: AppColors.getBorderColor()),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(3.r)),
+                                visualDensity: const VisualDensity(
+                                    horizontal: -4.0, vertical: -4.0),
+                                side: BorderSide(
+                                    color: AppColors.getBorderColor()),
                                 value: _isRemember,
                                 onChanged: (bool? value) {
                                   _isRemember = value!;
@@ -134,26 +134,45 @@ class _SignInScreenState extends State<SignInScreen> {
                           },
                           child: Text(
                             "Forgot Password?",
-                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.primaryColor),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(color: AppColors.primaryColor),
                           ),
                         )
                       ],
                     ),
                     VSpace(40.h),
+
+                    // Main Sign In Button
                     AppButton(
                       title: "Sign In".tr,
                       width: double.infinity,
                       bgColor: AppColors.primaryColor,
                       onPress: () {
                         Get.toNamed(RoutesName.bottomNavScreen);
-                        // if (_formKey.currentState!.validate()) {
-                        //   authController.signIn(
-                        //     _emailController.text,
-                        //     _passwordController.text,
-                        //   );
-                        // }
                       },
                     ),
+
+                    // 👇 Temporary Doctor Login Button
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const DoctorDashboardView()),
+                        );
+                      },
+                      child: Text(
+                        "Log in as Doctor (Temp)",
+                        style:
+                            Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                      ),
+                    ),
+
                     VSpace(30.h),
                     Stack(
                       children: [
@@ -240,7 +259,10 @@ class _SignInScreenState extends State<SignInScreen> {
                           },
                           child: Text(
                             "Sign Up".tr,
-                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.primaryColor),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(color: AppColors.primaryColor),
                           ),
                         )
                       ],
