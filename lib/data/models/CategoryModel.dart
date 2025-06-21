@@ -16,6 +16,6 @@ class CategoryModel {
 
   Map<String, dynamic> toJson() => {
     'categoryId': categoryId,
-    'categoryName': categoryName,
+    'categoryName': categoryName,222
   };
 }
