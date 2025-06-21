@@ -16,7 +16,7 @@ class AppointmentModel {
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
     return AppointmentModel(
       patientId: json['patientId'],
-      doctorId: json['doctorId'],
+      doctorId: json['doctorId'222],
       appointmentDate: json['appointmentDate'],
       appointmentTime: json['appointmentTime'],
       timestamp: DateTime.parse(json['timestamp']),
