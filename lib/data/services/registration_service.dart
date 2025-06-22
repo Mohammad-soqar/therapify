@@ -1,9 +1,16 @@
-import '../services/firebase_auth_service.dart';
+// lib/data/services/registration_service.dart
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegistrationService {
-  final AuthMethods _authMethods = AuthMethods();
-  // Methods for patient and doctor registration
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+
+  /// Registers a new patient:
+  /// 1. Creates a Firebase Auth user
+  /// 2. Writes a /users/{uid} profile
+  /// 3. Writes a /patients/{uid} detail record
   Future<void> registerNewPatient({
     required String fullName,
     required String phoneNumber,
@@ -16,20 +23,32 @@ class RegistrationService {
     required String doctorId,
     required String prescriptionId,
     required String gloveId,
-    
   }) async {
-    String uid = await _authMethods.registerUser(
-      fullName,
-      phoneNumber,
-      email,
-      nationality,
-      gender,
-      birthDate,
-      password,
-      "Patient",
+    // 1️⃣ Create the Auth user
+    final credential = await _auth.createUserWithEmailAndPassword(
+      email: email.trim(),
+      password: password,
     );
-    await _authMethods.registerPatient(uid, emergencyContact, doctorId, prescriptionId, gloveId, DateTime.now(), DateTime.now());
-  }
+    final uid = credential.user!.uid;
 
- 
+    // 2️⃣ Write the user profile
+    await _db.collection('users').doc(uid).set({
+      'name': fullName,
+      'phoneNumber': phoneNumber,
+      'email': email.trim(),
+      'country': nationality,
+      'gender': gender,
+      'dob': birthDate.toIso8601String(),
+      'role': 'patient',
+    });
+
+    // 3️⃣ Write the patient-specific data
+    await _db.collection('patients').doc(uid).set({
+      'patientId': uid,
+      'emergencyContact': emergencyContact,
+      'doctorId': doctorId,
+      'prescriptionId': prescriptionId,
+      'gloveId': gloveId,
+    });
+  }
 }

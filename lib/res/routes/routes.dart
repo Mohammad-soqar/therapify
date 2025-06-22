@@ -1,3 +1,4 @@
+import 'package:therapify/view/screens/auth/signup_doctor_screen.dart';
 import 'package:therapify/view/screens/call/call_screen.dart';
 import 'package:therapify/view/screens/wishlist/wishlist_screen.dart';
 import 'package:get/get.dart';
@@ -202,6 +203,7 @@ class AppRoutes {
         page: () => const CallScreen(),
         transition: Transition.rightToLeftWithFade,
       ),
+      
     ];
   }
 }
