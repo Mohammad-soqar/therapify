@@ -8,12 +8,12 @@ import 'package:therapify/res/routes/routes_name.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 
 class DoctorItem extends StatelessWidget {
-  const DoctorItem({super.key, required this.item});
-  final DoctorModel item;
+  const DoctorItem({super.key,});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      //TODO : Navigate to doctor details screen with the item data
       onTap: () => Get.toNamed(RoutesName.doctorDetailsScreen, arguments: item),
       child: Container(
         margin: EdgeInsets.only(bottom: 15.h),

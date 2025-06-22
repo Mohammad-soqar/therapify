@@ -1,9 +1,9 @@
 // lib/view/screens/auth/sign_in_screen.dart
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/res/routes/routes_name.dart';
 import 'package:therapify/view/screens/auth/signin_doctor_screen.dart';
@@ -43,16 +43,19 @@ class _SignInScreenState extends State<SignInScreen> {
       );
 
       final user = credential.user;
-      if (user == null) throw FirebaseAuthException(
-        code: 'USER_NOT_FOUND',
-        message: 'No user found for this email.',
-      );
+      if (user == null)
+        throw FirebaseAuthException(
+          code: 'USER_NOT_FOUND',
+          message: 'No user found for this email.',
+        );
 
       Navigator.of(context).pushReplacementNamed(RoutesName.bottomNavScreen);
     } catch (e) {
       Get.snackbar(
         'Login Failed',
-        e is FirebaseAuthException ? e.message ?? 'Authentication error' : e.toString(),
+        e is FirebaseAuthException
+            ? e.message ?? 'Authentication error'
+            : e.toString(),
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -69,7 +72,8 @@ class _SignInScreenState extends State<SignInScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Welcome Back", style: Theme.of(context).textTheme.titleLarge),
+              Text("Welcome Back",
+                  style: Theme.of(context).textTheme.titleLarge),
               const VSpace(10),
               const Text("Hello there, log in to continue!"),
               const VSpace(50),
@@ -82,8 +86,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     VSpace(8.h),
                     TextFormField(
                       controller: _emailController,
-                      validator: (value) =>
-                          value == null || value.isEmpty ? 'Please enter your email' : null,
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Please enter your email'
+                          : null,
                       style: Theme.of(context).textTheme.bodyMedium,
                       decoration: AppInputDecoration.roundInputDecoration(
                         context: context,
@@ -95,8 +100,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     VSpace(8.h),
                     TextFormField(
                       controller: _passwordController,
-                      validator: (value) =>
-                          value == null || value.isEmpty ? 'Please enter your password' : null,
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Please enter your password'
+                          : null,
                       style: Theme.of(context).textTheme.bodyMedium,
                       decoration: AppInputDecoration.roundInputDecoration(
                         context: context,
@@ -132,7 +138,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                   horizontal: -4.0,
                                   vertical: -4.0,
                                 ),
-                                side: BorderSide(color: AppColors.getBorderColor()),
+                                side: BorderSide(
+                                    color: AppColors.getBorderColor()),
                                 value: _isRemember,
                                 onChanged: (bool? value) {
                                   _isRemember = value!;
@@ -152,7 +159,10 @@ class _SignInScreenState extends State<SignInScreen> {
                           },
                           child: Text(
                             "Forgot Password?",
-                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
                                   color: AppColors.primaryColor,
                                 ),
                           ),
@@ -169,23 +179,23 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
 
                     // 👇 doctor Login Text Link
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const SignInDoctorScreen(),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      "Log in as doctor",
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            color: AppColors.primaryColor,
-                            fontWeight: FontWeight.bold,
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const SignInDoctorScreen(),
                           ),
+                        );
+                      },
+                      child: Text(
+                        "Log in as doctor",
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: AppColors.primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
                     ),
-                  ),
 
                     VSpace(30.h),
                     Stack(
@@ -220,10 +230,12 @@ class _SignInScreenState extends State<SignInScreen> {
                               child: Container(
                                 padding: EdgeInsets.all(10.r),
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: AppColors.getBorderColor()),
+                                  border: Border.all(
+                                      color: AppColors.getBorderColor()),
                                   borderRadius: BorderRadius.circular(25.r),
                                 ),
-                                child: Image.asset("assets/icons/$icon.png", width: 18.r),
+                                child: Image.asset("assets/icons/$icon.png",
+                                    width: 18.r),
                               ),
                             ),
                           ),
@@ -238,7 +250,10 @@ class _SignInScreenState extends State<SignInScreen> {
                           onTap: () => Get.toNamed(RoutesName.signUpScreen),
                           child: Text(
                             "Sign Up".tr,
-                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
                                   color: AppColors.primaryColor,
                                 ),
                           ),

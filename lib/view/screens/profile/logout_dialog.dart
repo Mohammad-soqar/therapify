@@ -1,13 +1,34 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/view/screens/auth/signin_screen.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 
 class LogoutDialog extends StatelessWidget {
   const LogoutDialog({super.key});
+
+  Future<void> _handleLogout() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.pushReplacement(
+        Get.context!,
+        MaterialPageRoute(
+          builder: (context) => const SignInScreen(),
+        ),
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Logout Failed',
+        e is FirebaseAuthException
+            ? e.message ?? 'Authentication error'
+            : e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +80,7 @@ class LogoutDialog extends StatelessWidget {
                   title: "Yes, Log out",
                   bgColor: AppColors.primaryColor,
                   onPress: () {
-                    Get.offAllNamed(RoutesName.signInScreen);
+                    _handleLogout();
                   },
                 ),
               )

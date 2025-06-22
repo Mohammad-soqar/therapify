@@ -3,7 +3,7 @@ class DoctorModel {
   final String category;
   final double consultationFee;
   final double netConsultationFee;
-  final bool followUp;
+  final double followUp;
   final String availabilityDate;
   final String availabilityTime;
   final String location;
