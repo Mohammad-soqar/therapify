@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/view/screens/auth/signin_doctor_screen.dart';
 import 'package:therapify/view/screens/forgot_password/password_reset_email.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/input_decoration.dart';
@@ -166,6 +167,25 @@ class _SignInScreenState extends State<SignInScreen> {
                       bgColor: AppColors.primaryColor,
                       onPress: _handleSignIn,
                     ),
+
+                    // 👇 doctor Login Text Link
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SignInDoctorScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "Log in as doctor",
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
 
                     VSpace(30.h),
                     Stack(
