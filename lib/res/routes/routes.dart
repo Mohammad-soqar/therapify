@@ -1,4 +1,4 @@
-import 'package:therapify/view/screens/auth/signup_doctor_screen.dart';
+import 'package:therapify/view/screens/auth/signup_screen.dart';
 import 'package:therapify/view/screens/call/call_screen.dart';
 import 'package:therapify/view/screens/wishlist/wishlist_screen.dart';
 import 'package:get/get.dart';
@@ -17,7 +17,7 @@ import 'package:therapify/view/screens/doctor/doctor_list_screen.dart';
 import 'package:therapify/res/routes/routes_name.dart';
 import 'package:therapify/view/screens/2fa/two_fa_screen.dart';
 import 'package:therapify/view/screens/auth/signin_screen.dart';
-import 'package:therapify/view/screens/auth/signup_screen.dart';
+import 'package:therapify/view/screens/auth/signup_doctor_screen.dart';
 import 'package:therapify/view/screens/home/home_screen.dart';
 import 'package:therapify/view/screens/kyc/kyc_submission_screen.dart';
 import 'package:therapify/view/screens/kyc/kyc_verification_screen.dart';

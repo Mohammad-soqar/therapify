@@ -1,22 +1,23 @@
-import 'package:therapify/data/static/department_data.dart';
-import 'package:therapify/utils/utils.dart';
-import 'package:therapify/view/screens/department/department_item.dart';
-import 'package:therapify/view/screens/doctor/doctor_filter_sheet.dart';
-import 'package:therapify/view/screens/doctor/doctor_item.dart';
-import 'package:therapify/view/widgets/input_decoration.dart';
-import 'package:therapify/view/widgets/side_drawer.dart';
-import 'package:therapify/viewmodels/controllers/app_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:therapify/data/static/department_data.dart';
 import 'package:therapify/data/static/doctor_data.dart';
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/utils/utils.dart';
+import 'package:therapify/view/screens/department/department_item.dart';
+import 'package:therapify/view/screens/doctor/doctor_filter_sheet.dart';
+import 'package:therapify/view/screens/doctor/doctor_item.dart';
 import 'package:therapify/view/screens/home/notification_button.dart';
-import 'package:therapify/view/widgets/spacing.dart';
 import 'package:therapify/view/screens/messaging/messages_screen.dart';
-
+import 'package:therapify/view/widgets/input_decoration.dart';
+import 'package:therapify/view/widgets/side_drawer.dart';
+import 'package:therapify/view/widgets/spacing.dart';
+import 'package:therapify/viewmodels/controllers/app_controller.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -32,6 +33,38 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void openDrawer() {
     scaffoldKey.currentState?.openDrawer();
+  }
+
+  String _fullName = 'Loading...';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      setState(() {
+        _fullName = 'Guest';
+      });
+      return;
+    }
+
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    setState(() {
+      if (doc.exists) {
+        final data = doc.data();
+        _fullName = data?['name'] ?? 'User';
+      } else {
+        _fullName = 'User';
+      }
+    });
   }
 
   @override
@@ -64,15 +97,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "John J. Grubbs",
-                          style: Theme.of(context).textTheme.bodyLarge,
+                          _fullName != null
+                              ? "Welcome,\n$_fullName"
+                              : "Loading...",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(color: AppColors.getTitleColor()),
                         ),
                         Text(
                           "How are you feeling today?",
                           style: Theme.of(context)
                               .textTheme
                               .bodyMedium!
-                              .copyWith(fontSize: 12.sp, color: AppColors.getTextColor()),
+                              .copyWith(
+                                  fontSize: 12.sp,
+                                  color: AppColors.getTextColor()),
                         ),
                       ],
                     )
@@ -80,20 +120,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 HSpace(10.w),
                 Row(
-                   children: [
+                  children: [
                     const NotificationButton(notificationCount: 2),
-                      SizedBox(width: 8.w),
-                        IconButton(
-                         icon: Icon(Icons.message_rounded, color: AppColors.getTextColor()),
-                          onPressed: () {
-                          Navigator.push(
+                    SizedBox(width: 8.w),
+                    IconButton(
+                      icon: Icon(Icons.message_rounded,
+                          color: AppColors.getTextColor()),
+                      onPressed: () {
+                        Navigator.push(
                           context,
-                MaterialPageRoute(builder: (_) => const MessagesScreen()),
-                      );
+                          MaterialPageRoute(
+                              builder: (_) => const MessagesScreen()),
+                        );
                       },
                     ),
-                          ],
-                  ),
+                  ],
+                ),
               ],
             ),
             VSpace(20.h),
@@ -110,7 +152,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         context: context,
                         hintText: 'Search here',
                         fillColor: AppColors.getContainerColor(),
-                        borderColor: AppColors.primaryColor.withAlpha((0.2 * 255).toInt()),
+                        borderColor: AppColors.primaryColor
+                            .withAlpha((0.2 * 255).toInt()),
                         prefixIcon: Image.asset(
                           "assets/icons/search.png",
                           color: AppColors.getTextColor2(),
@@ -125,8 +168,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 48.r,
                       height: 48.r,
                       padding: EdgeInsets.all(15.r),
-                      decoration:
-                          BoxDecoration(color: AppColors.primaryColor, borderRadius: BorderRadius.circular(10.r)),
+                      decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          borderRadius: BorderRadius.circular(10.r)),
                       child: Image.asset(
                         "assets/icons/filter.png",
                         color: AppColors.whiteColor,
@@ -148,7 +192,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () => Get.toNamed(RoutesName.appointmentListScreen),
                   child: Text(
                     "See All",
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.primaryColor),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(color: AppColors.primaryColor),
                   ),
                 ),
               ],
@@ -171,18 +218,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           : "assets/images/appointment_bg.png",
                       fit: BoxFit.cover,
                       alignment: Alignment.center,
-                      color: AppColors.primaryColor.withAlpha((0.8 * 255).toInt()),
+                      color:
+                          AppColors.primaryColor.withAlpha((0.8 * 255).toInt()),
                     ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Flexible(flex: 3, child: Image.asset("assets/images/doctor/doctor_6.png")),
+                      Flexible(
+                          flex: 3,
+                          child:
+                              Image.asset("assets/images/doctor/doctor_6.png")),
                       Flexible(
                         flex: 4,
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 20.w, vertical: 30.h),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -191,36 +243,47 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleMedium!
-                                    .copyWith(color: AppColors.whiteColor, fontSize: 16.sp),
+                                    .copyWith(
+                                        color: AppColors.whiteColor,
+                                        fontSize: 16.sp),
                               ),
                               VSpace(6.h),
                               Text(
                                 "Depression",
-                                style:
-                                    Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.whiteColor),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(color: AppColors.whiteColor),
                               ),
-                              VSpace(16.h),
+                              VSpace(10.h),
                               Container(
+                                width: double.infinity,
                                 padding: EdgeInsets.all(8.r),
                                 decoration: BoxDecoration(
                                     color: AppColors.primaryColor,
                                     borderRadius: BorderRadius.circular(5.r),
-                                    border: const Border(left: BorderSide(color: AppColors.whiteColor))),
+                                    border: const Border(
+                                        left: BorderSide(
+                                            color: AppColors.whiteColor))),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
                                       CupertinoIcons.clock_solid,
                                       color: AppColors.whiteColor,
-                                      size: 18.sp,
+                                      size: 12.sp,
                                     ),
                                     HSpace(5.w),
+                                    //TODO: Replace with actual appointment time
                                     Text(
-                                      Utils.dateFormat(DateTime.now().toString()),
+                                      Utils.dateFormat(
+                                          DateTime.now().toString()),
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodySmall!
-                                          .copyWith(color: AppColors.whiteColor),
+                                          .labelSmall!
+                                          .copyWith(
+                                              fontSize: 12.sp,
+                                              color: AppColors.whiteColor),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -248,7 +311,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () => Get.toNamed(RoutesName.doctorListScreen),
                   child: Text(
                     "See All",
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.primaryColor),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(color: AppColors.primaryColor),
                   ),
                 ),
               ],
@@ -305,14 +371,19 @@ class SpecialistsSection extends StatelessWidget {
               onTap: () => Get.toNamed(RoutesName.doctorListScreen),
               child: Text(
                 "See All",
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.primaryColor),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(color: AppColors.primaryColor),
               ),
             ),
           ],
         ),
         const VSpace(15),
+        //TODO: Replace with actual doctor items
         Column(
-          children: limitedDoctors.map((item) => DoctorItem(item: item)).toList(),
+          children:
+              limitedDoctors.map((item) => DoctorItem(item: item)).toList(),
         ),
       ],
     );
