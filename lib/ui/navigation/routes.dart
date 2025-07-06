@@ -1,34 +1,34 @@
-/*
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:therapify/viewmodels/register_viewmodel.dart';
-import 'package:therapify/ui/views/x/register_view.dart';
+// lib/ui/navigation/routes.dart
 
-class HomeView extends StatelessWidget {
-  const HomeView({super.key});
+import 'package:get/get.dart';
+import 'package:therapify/view/screens/auth/signin_screen.dart';
+import 'package:therapify/view/screens/auth/signup_screen.dart';
+import 'package:therapify/view/screens/auth/signin_doctor_screen.dart';
+import 'package:therapify/view/screens/auth/signup_doctor_screen.dart';
+import 'package:therapify/view/screens/home/home_screen.dart';
+import 'package:therapify/res/routes/routes_name.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-           Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => ChangeNotifierProvider(
-      create: (_) => RegisterViewModel(),
-      child: RegisterView(),
+class AppPages {
+  static final getPages = [
+    GetPage(
+      name: RoutesName.signInScreen,
+      page: () => const SignInScreen(),
     ),
-  ),
-);
-
-          },
-          child: const Text('Go to Register'),
-        ),
-      ),
-    );
-  }
+    GetPage(
+      name: RoutesName.signUpScreen,
+      page: () => const SignUpScreen(),
+    ),
+    GetPage(
+      name: RoutesName.signInDoctorScreen,
+      page: () => const SignInDoctorScreen(),
+    ),
+    GetPage(
+      name: RoutesName.signUpDoctorScreen,
+      page: () => const DoctorSignUpScreen(),
+    ),
+    GetPage(
+      name: RoutesName.homeScreen,
+      page: () => const HomeScreen(),
+    ),
+  ];
 }
-*/

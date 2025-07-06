@@ -18,6 +18,8 @@ import 'package:therapify/view/widgets/input_decoration.dart';
 import 'package:therapify/view/widgets/side_drawer.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 import 'package:therapify/viewmodels/controllers/app_controller.dart';
+import 'package:provider/provider.dart';
+import 'package:therapify/viewmodels/doctor_list_viewmodel.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -343,6 +345,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+
+
 class SpecialistsSection extends StatelessWidget {
   const SpecialistsSection({super.key});
 
@@ -353,9 +357,15 @@ class SpecialistsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<DoctorListViewModel>(context);
     final isTabletDevice = isTablet(context);
     final doctorDisplayCount = isTabletDevice ? 6 : 3;
-    final limitedDoctors = doctorData.take(doctorDisplayCount).toList();
+
+    if (viewModel.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final doctors = viewModel.doctors.take(doctorDisplayCount).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -380,12 +390,14 @@ class SpecialistsSection extends StatelessWidget {
           ],
         ),
         const VSpace(15),
-        //TODO: Replace with actual doctor items
-        Column(
-          children:
-              limitedDoctors.map((item) => DoctorItem(item: item)).toList(),
-        ),
+        doctors.isEmpty
+            ? Text("No doctors available")
+            : Column(
+                children:
+                    doctors.map((item) => DoctorItem(item: item)).toList(),
+              ),
       ],
     );
   }
 }
+  

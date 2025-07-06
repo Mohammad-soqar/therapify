@@ -33,4 +33,8 @@ class RoutesName {
   static const String notificationScreen = "/notificationScreen";
   static const String notificationPermissionScreen = "/notificationPermissionScreen";
   static const String callScreen = "/callScreen";
+
+  static var signInDoctorScreen;
+
+  static var signUpDoctorScreen;
 }

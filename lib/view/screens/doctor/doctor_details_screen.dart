@@ -1,6 +1,6 @@
+import 'package:therapify/data/models/DoctorModel.dart';
 import 'package:therapify/res/routes/routes_name.dart';
 import 'package:therapify/utils/utils.dart';
-import 'package:therapify/view/screens/doctor/doctor_experience_tab.dart';
 import 'package:therapify/view/screens/doctor/doctor_info_tab.dart';
 import 'package:therapify/view/screens/doctor/doctor_review_tab.dart';
 import 'package:therapify/view/widgets/appbar.dart';
@@ -9,7 +9,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:therapify/data/static/doctor_data.dart';
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/spacing.dart';
@@ -24,7 +23,7 @@ class DoctorDetailsScreen extends StatefulWidget {
 
 class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
-  final List<dynamic> _tabButtons = ["Info", "Experience", "Reviews"];
+  final List<dynamic> _tabButtons = ["Info", "Reviews"];
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +31,6 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerP
 
     final List<Widget> _tabs = [
       const DoctorInfoTab(),
-      DoctorExperienceTab(experienceList: item.experience),
       const DoctorReviewsTab(),
     ];
 
@@ -132,7 +130,7 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerP
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(50.r),
                           child: Image.asset(
-                            item.image,
+                             "assets/images/doctor_placeholder.png",
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -163,7 +161,7 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerP
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item.name,
+                            item.name!,
                             style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.getTitleColor()),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -174,7 +172,7 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerP
                               Icon(CupertinoIcons.star_fill, color: AppColors.warningColor, size: 14.sp),
                               HSpace(5.w),
                               Text(
-                                "${item.averageRating.toString()}  (${item.review.toString()} reviews)",
+                                "${item.rating?.toStringAsFixed(1) ?? 'N/A'}",
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium!
@@ -184,7 +182,7 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerP
                           ),
                           VSpace(8.h),
                           Text(
-                            item.specialty,
+                            item.category ?? "Unknown",
                             style: Theme.of(context).textTheme.bodySmall,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,

@@ -1,5 +1,3 @@
-// lib/data/services/doctor_service.dart
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:therapify/data/models/DoctorModel.dart';
 
@@ -20,7 +18,7 @@ class DoctorService {
     return _db.collection('doctors').doc(id).set(doctor.toJson());
   }
 
-  /// Streams a doctor record; throws if data is missing.
+  /// Streams a single doctor document in real-time.
   Stream<DoctorModel> streamDoctor(String id) {
     return _db.collection('doctors').doc(id).snapshots().map((snapshot) {
       if (!snapshot.exists || snapshot.data() == null) {
@@ -30,8 +28,17 @@ class DoctorService {
     });
   }
 
-  /// Deletes a doctor record.
+  /// Deletes a doctor document.
   Future<void> deleteDoctor(String id) {
     return _db.collection('doctors').doc(id).delete();
+  }
+
+  /// Streams all doctors in real-time.
+  Stream<List<DoctorModel>> streamAllDoctors() {
+    return _db.collection('doctors').snapshots().map((snapshot) {
+      return snapshot.docs
+          .map((doc) => DoctorModel.fromJson(doc.data()))
+          .toList();
+    });
   }
 }
