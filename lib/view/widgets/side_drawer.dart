@@ -1,6 +1,9 @@
 import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/view/screens/appointment/appointment_list_screen.dart';
+import 'package:therapify/view/screens/profile/edit_profile_screen.dart';
 import 'package:therapify/view/screens/profile/logout_dialog.dart';
+import 'package:therapify/view/screens/transaction/transaction_screen.dart';
+import 'package:therapify/view/screens/wishlist/wishlist_screen.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 import 'package:therapify/viewmodels/controllers/app_controller.dart';
 import 'package:flutter/material.dart';
@@ -159,10 +162,45 @@ class SideDrawer extends StatelessWidget {
     );
   }
 }
-
-List<dynamic> sidebarItems = [
-  {"image": "assets/icons/person.png", "title": "Profile", "route": RoutesName.editProfileScreen},
-  {"image": "assets/icons/calendar.png", "title": "Appointments", "route": RoutesName.appointmentListScreen},
-  {"image": "assets/icons/fund_history.png", "title": "Transaction History", "route": RoutesName.transactionScreen},
-  {"image": "assets/icons/heart.png", "title": "Wishlist", "route": RoutesName.wishlistScreen},
+final List<Map<String, dynamic>> sidebarItems = [
+  {
+    "image": "assets/icons/person.png",
+    "title": "Profile",
+    "onTap": (BuildContext context) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+      );
+    },
+  },
+  {
+    "image": "assets/icons/calendar.png",
+    "title": "Appointments",
+    "onTap": (BuildContext context) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const AppointmentListScreen()),
+      );
+    },
+  },
+  {
+    "image": "assets/icons/fund_history.png",
+    "title": "Transaction History",
+    "onTap": (BuildContext context) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const TransactionScreen()),
+      );
+    },
+  },
+  {
+    "image": "assets/icons/heart.png",
+    "title": "Wishlist",
+    "onTap": (BuildContext context) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const WishlistScreen()),
+      );
+    },
+  },
 ];

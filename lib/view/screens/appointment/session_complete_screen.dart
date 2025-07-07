@@ -1,8 +1,9 @@
 import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/view/screens/doctor/doctor_review_screen.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/appbar.dart';
 import 'package:therapify/view/widgets/back_button.dart';
+import 'package:therapify/view/widgets/bottom_nav.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/cupertino.dart';
@@ -134,8 +135,13 @@ class _SessionCompleteScreenState extends State<SessionCompleteScreen> {
                 Expanded(
                   child: AppButton(
                     title: "Return Home",
-                    onPress: () {
-                      Get.offAllNamed(RoutesName.bottomNavScreen);
+                    onPress: (){
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const BottomNavbar(),
+                        ),
+                      );
                     },
                     bgColor: AppColors.getContainerColor(),
                     borderColor: AppColors.primaryColor.withAlpha((0.2 * 255).toInt()),
@@ -148,7 +154,12 @@ class _SessionCompleteScreenState extends State<SessionCompleteScreen> {
                   child: AppButton(
                     title: "Write a review",
                     onPress: () {
-                      Get.toNamed(RoutesName.doctorReviewScreen);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const DoctorReviewScreen(),
+                        ),
+                      );
                     },
                     bgColor: AppColors.primaryColor,
                     width: double.infinity,

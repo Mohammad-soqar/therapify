@@ -1,5 +1,4 @@
 import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/res/routes/routes_name.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/appbar.dart';
 import 'package:therapify/view/widgets/back_button.dart';
@@ -163,7 +162,12 @@ class _DoctorReviewScreenState extends State<DoctorReviewScreen> {
                   child: AppButton(
                     title: "Submit",
                     onPress: () {
-                      Get.offAllNamed(RoutesName.bottomNavScreen);
+                       Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const BottomAppBar(),
+                        ),
+                      );;
                     },
                     bgColor: AppColors.primaryColor,
                     width: double.infinity,

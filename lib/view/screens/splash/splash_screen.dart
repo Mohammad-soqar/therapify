@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/view/screens/onboard/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -22,12 +22,25 @@ class _SplashScreenState extends State<SplashScreen> {
       // if (authToken != null) {
       // Get.offAllNamed(BottomNavbar.routeName);
       // } else {
-      Get.offAllNamed(RoutesName.bottomNavScreen);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const BottomAppBar(),
+        ),
+      );
+
       // Get.offAllNamed(RoutesName.signInScreen);
       // Get.offAllNamed(RoutesName.onboardingScreen);
       // }
     } else {
-      Get.offAllNamed(RoutesName.onboardingScreen);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const OnboardingScreen(),
+        ),
+      );
+      ;
     }
   }
 
@@ -51,7 +64,9 @@ class _SplashScreenState extends State<SplashScreen> {
           Container(
             color: AppColors.getBackgroundColor(),
             child: Image.asset(
-              Get.isDarkMode ? "assets/images/splash_bg_dark.png" : "assets/images/splash_bg.png",
+              Get.isDarkMode
+                  ? "assets/images/splash_bg_dark.png"
+                  : "assets/images/splash_bg.png",
               fit: BoxFit.cover,
               height: double.infinity,
               width: double.infinity,
@@ -67,7 +82,8 @@ class _SplashScreenState extends State<SplashScreen> {
                   color: AppColors.getContainerColor(),
                   borderRadius: BorderRadius.circular(100),
                   border: Border.all(
-                    color: AppColors.primaryColor.withAlpha((0.1 * 255).toInt()),
+                    color:
+                        AppColors.primaryColor.withAlpha((0.1 * 255).toInt()),
                     width: 4.r,
                   )),
               child: Image.asset(
@@ -81,7 +97,9 @@ class _SplashScreenState extends State<SplashScreen> {
             bottom: 80.h,
             left: 0,
             right: 0,
-            child: Center(child: Text("DocTime", style: Theme.of(context).textTheme.displayLarge)),
+            child: Center(
+                child: Text("DocTime",
+                    style: Theme.of(context).textTheme.displayLarge)),
           ),
         ],
       ),

@@ -3,8 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:therapify/data/models/DoctorModel.dart';
 import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/view/screens/appointment/appointment_details_screen.dart';
+import 'package:therapify/view/screens/appointment/appointment_history_screen.dart';
 import 'package:therapify/view/screens/appointment/appointment_item.dart';
+import 'package:therapify/view/screens/doctor/doctor_list_screen.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/appbar.dart';
 import 'package:therapify/view/widgets/back_button.dart';
@@ -113,11 +115,13 @@ class _AppointmentListScreenState extends State<AppointmentListScreen>
           itemBuilder: (context, index) {
             var item = _mockAppointments[index];
             return InkWell(
-              onTap: () => Get.toNamed(
-                type == "Upcoming"
-                    ? RoutesName.appointmentDetailsScreen
-                    : RoutesName.appointmentHistoryScreen,
-              ),
+              onTap: () {
+                if (type == "Upcoming") {
+                  Get.to(() => const AppointmentDetailsScreen());
+                } else {
+                  Get.to(() => const AppointmentHistoryScreen());
+                }
+              },
               child: AppointmentItem(item: item),
             );
           },
@@ -145,7 +149,10 @@ class _AppointmentListScreenState extends State<AppointmentListScreen>
             AppButton(
               width: double.infinity,
               title: "Book Appointment Now",
-              onPress: () => Get.toNamed(RoutesName.doctorListScreen),
+              onPress: () {Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const DoctorListScreen()),
+              );},
               bgColor: AppColors.primaryColor,
             )
           ],

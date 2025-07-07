@@ -1,5 +1,5 @@
-import 'package:therapify/res/routes/routes_name.dart';
 import 'package:therapify/res/themes/theme_service.dart';
+import 'package:therapify/view/screens/appointment/appointment_list_screen.dart';
 import 'package:therapify/view/screens/doctor/doctor_list_screen.dart';
 import 'package:therapify/view/screens/wishlist/wishlist_screen.dart';
 import 'package:therapify/view/widgets/curve_clipper.dart';
@@ -48,8 +48,13 @@ class _BottomNavbarState extends State<BottomNavbar> {
           padding: EdgeInsets.only(top: 30.h),
           child: FloatingActionButton.small(
             onPressed: () {
-              Get.toNamed(RoutesName.appointmentListScreen);
-            },
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AppointmentListScreen(),
+                        ),
+                      );
+                    },
             backgroundColor: AppColors.primaryColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.r),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/view/screens/support_ticket/ticket_screen.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 
@@ -59,7 +59,12 @@ class CloseTicketDialog extends StatelessWidget {
                   title: "Close Ticket",
                   bgColor: AppColors.primaryColor,
                   onPress: () {
-                    Get.offNamed(RoutesName.ticketScreen);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const TicketScreen(),
+                      ),
+                    );
                     // showDialog(
                     //   context: context,
                     //   builder: (BuildContext context) {

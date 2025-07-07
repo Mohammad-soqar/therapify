@@ -1,5 +1,5 @@
 import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/view/screens/appointment/appointment_list_screen.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/appbar.dart';
 import 'package:therapify/view/widgets/back_button.dart';
@@ -121,14 +121,28 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
             VSpace(30.h),
             AppButton(
               title: "See Appointment",
-              onPress: () => Get.toNamed(RoutesName.appointmentListScreen),
+              onPress: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AppointmentListScreen(),
+                        ),
+                      );
+                    },
               bgColor: AppColors.primaryColor,
               width: double.infinity,
             ),
             VSpace(20.h),
             AppButton(
               title: "Return Home",
-              onPress: () => Get.offAllNamed(RoutesName.bottomNavScreen),
+              onPress: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const BottomAppBar(),
+                        ),
+                      );
+                    },
               bgColor: AppColors.getContainerColor(),
               width: double.infinity,
               textColor: AppColors.getTitleColor(),

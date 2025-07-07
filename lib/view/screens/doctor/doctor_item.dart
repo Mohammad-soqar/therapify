@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:therapify/data/models/DoctorModel.dart';
 import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/view/screens/doctor/doctor_details_screen.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 
 class DoctorItem extends StatelessWidget {
@@ -14,7 +14,14 @@ class DoctorItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.toNamed(RoutesName.doctorDetailsScreen, arguments: item),
+      onTap: () => {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const DoctorDetailsScreen(),
+                        ),
+                      )
+                    },
       child: Container(
         margin: EdgeInsets.only(bottom: 15.h),
         padding: EdgeInsets.all(10.r),

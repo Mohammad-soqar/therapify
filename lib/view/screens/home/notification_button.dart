@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/view/screens/notification/notification_screen.dart';
 
 class NotificationButton extends StatelessWidget {
   const NotificationButton({super.key, required this.notificationCount});
@@ -12,7 +12,14 @@ class NotificationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.toNamed(RoutesName.notificationScreen),
+      onTap: () => {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationScreen(),
+                        ),
+                      )
+                    },
       child: Container(
         padding: EdgeInsets.all(8.r),
         decoration: BoxDecoration(

@@ -34,11 +34,19 @@ class DoctorService {
   }
 
   /// Streams all doctors in real-time.
-  Stream<List<DoctorModel>> streamAllDoctors() {
-    return _db.collection('doctors').snapshots().map((snapshot) {
-      return snapshot.docs
-          .map((doc) => DoctorModel.fromJson(doc.data()))
-          .toList();
-    });
+  Future<List<DoctorModel>> streamAllDoctors() async {
+  final snap = await _db.collection('doctors').get();
+  print("Raw doctor docs: ${snap.docs.length}");
+  
+  for (var doc in snap.docs) {
+    print(doc.data()); // to inspect Firestore data
   }
+
+  try {
+    return snap.docs.map((d) => DoctorModel.fromJson(d.data())).toList();
+  } catch (e) {
+    print("Error parsing doctors: $e");
+    return [];
+  }
+}
 }

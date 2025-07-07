@@ -10,11 +10,10 @@ import 'package:therapify/res/localization/languages.dart';
 import 'package:therapify/res/routes/routes.dart';
 import 'package:therapify/res/themes/theme.dart';
 import 'package:therapify/res/themes/theme_service.dart';
-import 'package:therapify/ui/navigation/routes.dart';
+import 'package:therapify/view/screens/auth/signin_screen.dart';
 import 'package:therapify/view/screens/home/home_screen.dart';
 import 'package:therapify/viewmodels/controllers/app_controller.dart';
 import 'package:therapify/viewmodels/doctor_list_viewmodel.dart';
-import 'package:therapify/ui/navigation/routes.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -54,7 +53,6 @@ class MyApp extends StatelessWidget {
                 darkTheme: AppTheme.dark,
                 themeMode: ThemeService().getThemeMode(),
                 home: const AuthWrapper(),
-                getPages: AppPages.getPages,
               );
             },
           );

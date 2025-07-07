@@ -1,6 +1,7 @@
 import 'package:therapify/data/models/DoctorModel.dart';
-import 'package:therapify/res/routes/routes_name.dart';
 import 'package:therapify/utils/utils.dart';
+import 'package:therapify/view/screens/appointment/appointment_booking_screen.dart';
+import 'package:therapify/view/screens/call/call_screen.dart';
 import 'package:therapify/view/screens/doctor/doctor_info_tab.dart';
 import 'package:therapify/view/screens/doctor/doctor_review_tab.dart';
 import 'package:therapify/view/widgets/appbar.dart';
@@ -47,7 +48,14 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerP
               child: AppButton(
                 title: "Book Appointment",
                 onPress: () {
-                  Get.toNamed(RoutesName.appointmentBookingScreen);
+                  {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AppointmentBookingScreen(),
+                        ),
+                      );
+                    }
                 },
                 bgColor: AppColors.getContainerColor(),
                 borderColor: AppColors.primaryColor,
@@ -59,7 +67,14 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerP
               child: AppButton(
                 title: "See Doctor Now",
                 onPress: () {
-                  Get.toNamed(RoutesName.callScreen, arguments: "testVideoCall540");
+                  {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CallScreen(),
+                        ),
+                      );
+                    }
                 },
                 bgColor: AppColors.successColor,
                 icon: const Icon(Icons.videocam, color: AppColors.whiteColor),

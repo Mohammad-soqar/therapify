@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:therapify/data/models/DoctorModel.dart'; // ✅ correct model
 import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/view/screens/doctor/doctor_details_screen.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 
 class WishlistItem extends StatelessWidget {
@@ -15,7 +15,15 @@ class WishlistItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.toNamed(RoutesName.doctorDetailsScreen, arguments: item),
+      onTap: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) =>
+                const DoctorDetailsScreen(), // ✅ navigate to details screen
+          ),
+        );
+      },
       child: Dismissible(
         key: ValueKey(item.doctorId), // ✅ fixed key
         direction: DismissDirection.endToStart,
@@ -28,11 +36,13 @@ class WishlistItem extends StatelessWidget {
             color: AppColors.dangerColor,
             borderRadius: BorderRadius.circular(10.r),
           ),
-          child: Icon(CupertinoIcons.delete, color: AppColors.whiteColor, size: 18.sp),
+          child: Icon(CupertinoIcons.delete,
+              color: AppColors.whiteColor, size: 18.sp),
         ),
         child: Container(
           margin: EdgeInsets.only(bottom: 15.h),
-          padding: EdgeInsets.only(left: 20.w, top: 10.h, bottom: 10.h, right: 10.w),
+          padding:
+              EdgeInsets.only(left: 20.w, top: 10.h, bottom: 10.h, right: 10.w),
           decoration: BoxDecoration(
             color: AppColors.getContainerColor(),
             borderRadius: BorderRadius.circular(10.r),
@@ -47,7 +57,8 @@ class WishlistItem extends StatelessWidget {
                 borderRadius: BorderRadius.circular(30.r),
               ),
               child: item.imageUrl == null || item.imageUrl!.isEmpty
-                  ? Icon(Icons.person, size: 30.r, color: AppColors.primaryColor)
+                  ? Icon(Icons.person,
+                      size: 30.r, color: AppColors.primaryColor)
                   : ClipRRect(
                       borderRadius: BorderRadius.circular(30.r),
                       child: Image.network(

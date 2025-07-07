@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:therapify/res/constants/app_constants.dart';
-import 'package:therapify/res/routes/routes_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:therapify/view/screens/appointment/session_complete_screen.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class CallScreen extends StatefulWidget {
@@ -30,7 +30,15 @@ class _CallScreenState extends State<CallScreen> {
           ..turnOnCameraWhenJoining = true,
         onDispose: () {
           Future.delayed(Duration.zero, () {
-            Get.offAllNamed(RoutesName.sessionCompleteScreen);
+            {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const SessionCompleteScreen(),
+                ),
+              );
+            }
+            ;
           });
         },
       ),

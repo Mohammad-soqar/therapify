@@ -1,3 +1,9 @@
+import 'package:therapify/view/screens/2fa/two_fa_screen.dart';
+import 'package:therapify/view/screens/kyc/kyc_submission_screen.dart';
+import 'package:therapify/view/screens/kyc/kyc_verification_screen.dart';
+import 'package:therapify/view/screens/profile/change_password_screen.dart';
+import 'package:therapify/view/screens/profile/edit_profile_screen.dart' show EditProfileScreen;
+import 'package:therapify/view/screens/support_ticket/ticket_screen.dart';
 import 'package:therapify/viewmodels/controllers/app_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +11,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/res/routes/routes_name.dart';
 import 'package:therapify/res/themes/theme_service.dart';
 import 'package:therapify/view/screens/profile/logout_dialog.dart';
 import 'package:therapify/view/widgets/appbar.dart';
@@ -44,7 +49,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: "Profile",
         leading: [
           InkWell(
-            onTap: () => Get.offAllNamed(RoutesName.bottomNavScreen),
+            onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const BottomAppBar(),
+                        ),
+                      );
+                    },
             child: Container(
               width: 38.r,
               height: 38.r,
@@ -193,7 +205,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: 10.h),
                 ListTile(
                   dense: true,
-                  onTap: () => Get.toNamed(RoutesName.editProfileScreen),
+                  onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const EditProfileScreen(),
+                        ),
+                      );
+                    },
                   contentPadding: EdgeInsets.zero,
                   horizontalTitleGap: 15.w,
                   leading: Container(
@@ -221,7 +240,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 listDivider(),
                 ListTile(
                   dense: true,
-                  onTap: () => Get.toNamed(RoutesName.changePasswordScreen),
+                  onTap: () =>  {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ChangePasswordScreen(),
+                        ),
+                      )
+                    },
                   contentPadding: EdgeInsets.zero,
                   horizontalTitleGap: 15.w,
                   leading: Container(
@@ -249,7 +275,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 listDivider(),
                 ListTile(
                   dense: true,
-                  onTap: () => Get.toNamed(RoutesName.twoFaScreen),
+                  onTap: ()  {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TwoFactorScreen(),
+                        ),
+                      );
+                    },
                   contentPadding: EdgeInsets.zero,
                   horizontalTitleGap: 15.w,
                   leading: Container(
@@ -277,7 +310,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 listDivider(),
                 ListTile(
                   dense: true,
-                  onTap: () => Get.toNamed(RoutesName.kycVerificationScreen),
+                  onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const KycVerificationScreen(),
+                        ),
+                      );
+                    },
                   contentPadding: EdgeInsets.zero,
                   horizontalTitleGap: 15.w,
                   leading: Container(
@@ -305,7 +345,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 listDivider(),
                 ListTile(
                   dense: true,
-                  onTap: () => Get.toNamed(RoutesName.kycSubmissionScreen),
+                  onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const KycSubmissionScreen(),
+                        ),
+                      );
+                    },
                   contentPadding: EdgeInsets.zero,
                   horizontalTitleGap: 15.w,
                   leading: Container(
@@ -333,7 +380,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 listDivider(),
                 ListTile(
                   dense: true,
-                  onTap: () => Get.toNamed(RoutesName.ticketScreen),
+                  onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TicketScreen(),
+                        ),
+                      );
+                    },
                   contentPadding: EdgeInsets.zero,
                   horizontalTitleGap: 15.w,
                   leading: Container(

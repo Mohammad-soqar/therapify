@@ -16,13 +16,22 @@ class DoctorListViewModel extends ChangeNotifier {
     _listenToDoctors();
   }
 
-  void _listenToDoctors() {
-    _doctorService.streamAllDoctors().listen((doctorList) {
-      _allDoctors = doctorList;
-      _filteredDoctors = doctorList;
+  void _listenToDoctors() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      _allDoctors = await _doctorService.streamAllDoctors();
+      _filteredDoctors = _allDoctors; // Initially show all doctors
+    } catch (e) {
       _isLoading = false;
       notifyListeners();
-    });
+      // Handle error, e.g., show a snackbar or log the error
+      print('Error fetching doctors: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+    ;
   }
 
   void searchDoctors(String query) {

@@ -1,5 +1,4 @@
 import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/res/routes/routes_name.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/appbar.dart';
 import 'package:therapify/view/widgets/back_button.dart';
@@ -155,7 +154,14 @@ class _PaymentPreviewScreenState extends State<PaymentPreviewScreen> {
             VSpace(25.h),
             AppButton(
               title: "Payment Now",
-              onPress: () => Get.toNamed(RoutesName.paymentSuccessScreen),
+              onPress: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PaymentPreviewScreen(),
+                        ),
+                      );
+                    },
               bgColor: AppColors.primaryColor,
               width: double.infinity,
             ),
