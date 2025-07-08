@@ -5,6 +5,7 @@ List<DoctorModel> doctorData = [
   DoctorModel(
     doctorId: 'doc001',
     name: 'Dr. Amina Khaled',
+    phoneNumber: '+201112223344',
     consultationFee: 50,
     netConsultationFee: 45,
     followUp: 25,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:therapify/data/models/DoctorModel.dart';
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/view/screens/appointment/appointment_details_screen.dart';
@@ -11,6 +12,7 @@ import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/appbar.dart';
 import 'package:therapify/view/widgets/back_button.dart';
 import 'package:therapify/view/widgets/spacing.dart';
+import 'package:therapify/viewmodels/doctor_list_viewmodel.dart';
 
 class AppointmentListScreen extends StatefulWidget {
   const AppointmentListScreen({super.key});
@@ -151,7 +153,10 @@ class _AppointmentListScreenState extends State<AppointmentListScreen>
               title: "Book Appointment Now",
               onPress: () {Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => const DoctorListScreen()),
+                MaterialPageRoute(builder: (_) => ChangeNotifierProvider(
+  create: (_) => DoctorListViewModel(),
+  child: const DoctorListScreen(),
+))
               );},
               bgColor: AppColors.primaryColor,
             )

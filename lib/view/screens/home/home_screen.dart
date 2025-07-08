@@ -316,11 +316,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 InkWell(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const DoctorListScreen()));
+onTap: () {
+  Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (_) => ChangeNotifierProvider(
+            create: (_) => DoctorListViewModel(),
+            child: const DoctorListScreen(),
+          ),
+      ),
+  );
                   },
                   child: Text(
                     "See All",
@@ -388,10 +393,15 @@ class SpecialistsSection extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const DoctorListScreen()));
+Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+        builder: (_) => ChangeNotifierProvider(
+          create: (_) => DoctorListViewModel(),
+          child: const DoctorListScreen(),
+        ),
+    ),
+);
               },
               child: Text(
                 "See All",

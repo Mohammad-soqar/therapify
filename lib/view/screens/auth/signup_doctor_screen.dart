@@ -129,6 +129,7 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
           availabilityDate: dateStr,
           availabilityTime: timeStr,
           location: _locationCtrl.text.trim(),
+          phoneNumber: "${phoneCode}${_phoneCtrl.text.trim()}",
           rating: 0.0, // ✅ fixed
           imageUrl: "",
           specialization: _categoryCtrl.text.trim(),

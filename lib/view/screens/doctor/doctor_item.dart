@@ -14,14 +14,9 @@ class DoctorItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const DoctorDetailsScreen(),
-                        ),
-                      )
-                    },
+onTap: () {
+  Get.to(() => const DoctorDetailsScreen(), arguments: item);
+},
       child: Container(
         margin: EdgeInsets.only(bottom: 15.h),
         padding: EdgeInsets.all(10.r),

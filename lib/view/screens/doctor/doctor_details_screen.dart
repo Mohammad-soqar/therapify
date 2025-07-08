@@ -14,6 +14,8 @@ import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:therapify/utils/whatsapp_launcher.dart';
+
 
 class DoctorDetailsScreen extends StatefulWidget {
   const DoctorDetailsScreen({super.key});
@@ -28,7 +30,7 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerP
 
   @override
   Widget build(BuildContext context) {
-    DoctorModel item = Get.arguments;
+    final DoctorModel item = Get.arguments as DoctorModel;
 
     final List<Widget> _tabs = [
       const DoctorInfoTab(),
@@ -37,52 +39,51 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerP
 
     return Scaffold(
       bottomNavigationBar: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 12.h),
-        decoration: BoxDecoration(
-          color: AppColors.getContainerColor(),
-          boxShadow: Utils.defaultBoxShadow(),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: AppButton(
-                title: "Book Appointment",
-                onPress: () {
-                  {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const AppointmentBookingScreen(),
-                        ),
-                      );
-                    }
-                },
-                bgColor: AppColors.getContainerColor(),
-                borderColor: AppColors.primaryColor,
-                textColor: AppColors.getTitleColor(),
+  padding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 12.h),
+  decoration: BoxDecoration(
+    color: AppColors.getContainerColor(),
+    boxShadow: Utils.defaultBoxShadow(),
+  ),
+  child: Row(
+    children: [
+      // Book Appointment Button
+      Expanded(
+        child: AppButton(
+          title: "Book Appointment",
+          onPress: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const AppointmentBookingScreen(),
               ),
-            ),
-            HSpace(10.h),
-            Expanded(
-              child: AppButton(
-                title: "See Doctor Now",
-                onPress: () {
-                  {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const CallScreen(),
-                        ),
-                      );
-                    }
-                },
-                bgColor: AppColors.successColor,
-                icon: const Icon(Icons.videocam, color: AppColors.whiteColor),
-              ),
-            ),
-          ],
+            );
+          },
+          bgColor: AppColors.getContainerColor(),
+          borderColor: AppColors.primaryColor,
+          textColor: AppColors.getTitleColor(),
         ),
       ),
+      HSpace(10.h),
+
+      // See Doctor Now (WhatsApp) Button
+      Expanded(
+        child: AppButton(
+          title: "See Doctor Now",
+          onPress: () {
+            final phone = item.phoneNumber ?? '';
+            openWhatsAppChat(
+              phone,
+              message: "Hello Dr. ${item.name}, I’d like to talk now.",
+            );
+          },
+          bgColor: AppColors.successColor,
+          icon: const Icon(Icons.videocam, color: AppColors.whiteColor),
+        ),
+      ),
+    ],
+  ),
+),
+
       appBar: CustomAppbar(
         leading: const [GetBackButton()],
         title: "Specialist Details",
@@ -144,7 +145,8 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerP
                         height: 100.r,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(50.r),
-                          child: Image.asset(
+                          child: Image.
+                          asset(
                              "assets/images/doctor_placeholder.png",
                             fit: BoxFit.contain,
                           ),

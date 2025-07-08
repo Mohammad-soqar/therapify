@@ -13,7 +13,9 @@ class DoctorModel {
   final String? specialization; // Now nullable
   final double? rating; // Nullable & flagged
   final String? category; // Nullable & flagged
+  final String phoneNumber;
   final List<ScheduleModel> schedule;
+
 
   DoctorModel({
     required this.doctorId,
@@ -24,6 +26,7 @@ class DoctorModel {
     required this.availabilityDate,
     required this.availabilityTime,
     required this.location,
+    required this.phoneNumber,
     this.imageUrl,
     this.specialization,
     this.rating,
@@ -45,6 +48,7 @@ class DoctorModel {
       specialization: json['specialization'],
       rating: (json['rating'] != null) ? (json['rating'] as num).toDouble() : null,
       category: json['category'],
+      phoneNumber: json['phoneNumber'],
       schedule: (json['schedule'] as List<dynamic>?)
               ?.map((e) => ScheduleModel.fromJson(e))
               .toList() ??
@@ -65,6 +69,7 @@ class DoctorModel {
         'specialization': specialization,
         'rating': rating,
         'category': category,
+        'phoneNumber': phoneNumber,
         'schedule': schedule.map((e) => e.toJson()).toList(),
       };
 }

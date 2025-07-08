@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:therapify/data/models/DoctorModel.dart'; // ✅ correct model
+import 'package:therapify/data/models/DoctorModel.dart';
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/view/screens/doctor/doctor_details_screen.dart';
 import 'package:therapify/view/widgets/spacing.dart';
@@ -16,16 +16,10 @@ class WishlistItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) =>
-                const DoctorDetailsScreen(), // ✅ navigate to details screen
-          ),
-        );
+        Get.to(() => const DoctorDetailsScreen(), arguments: item);
       },
       child: Dismissible(
-        key: ValueKey(item.doctorId), // ✅ fixed key
+        key: ValueKey(item.doctorId),
         direction: DismissDirection.endToStart,
         onDismissed: (direction) => onDelete(),
         background: Container(

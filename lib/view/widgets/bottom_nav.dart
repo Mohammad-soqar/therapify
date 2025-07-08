@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:therapify/res/themes/theme_service.dart';
 import 'package:therapify/view/screens/appointment/appointment_list_screen.dart';
 import 'package:therapify/view/screens/doctor/doctor_list_screen.dart';
@@ -10,6 +11,7 @@ import 'package:therapify/view/screens/home/home_screen.dart';
 import 'package:therapify/view/screens/profile/profile_screen.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:therapify/viewmodels/doctor_list_viewmodel.dart';
 
 class BottomNavbar extends StatefulWidget {
   const BottomNavbar({super.key});
@@ -22,13 +24,15 @@ class _BottomNavbarState extends State<BottomNavbar> {
   ThemeService themeService = Get.put(ThemeService());
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
-    const HomeScreen(),
-    const DoctorListScreen(),
-    const DoctorListScreen(),
-    const WishlistScreen(),
-    const ProfileScreen(),
-  ];
+final List<Widget> _pages = [
+  const HomeScreen(),
+  ChangeNotifierProvider(
+    create: (_) => DoctorListViewModel(),
+    child: const DoctorListScreen(),
+  ),
+  const WishlistScreen(),
+  const ProfileScreen(),
+];
 
   final List<String> _icons = [
     "assets/icons/home.png",
