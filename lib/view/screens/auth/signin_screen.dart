@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/res/routes/routes_name.dart';
 import 'package:therapify/view/screens/auth/signin_doctor_screen.dart';
+import 'package:therapify/view/screens/auth/signup_screen.dart';
 import 'package:therapify/view/screens/forgot_password/password_reset_email.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/input_decoration.dart';
@@ -49,7 +49,12 @@ class _SignInScreenState extends State<SignInScreen> {
           message: 'No user found for this email.',
         );
 
-      Navigator.of(context).pushReplacementNamed(RoutesName.bottomNavScreen);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const BottomAppBar(),
+        ),
+      );
     } catch (e) {
       Get.snackbar(
         'Login Failed',
@@ -247,7 +252,14 @@ class _SignInScreenState extends State<SignInScreen> {
                       children: [
                         const Text("Don't have an account? "),
                         InkWell(
-                          onTap: () => Get.toNamed(RoutesName.signUpScreen),
+                          onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SignUpScreen(),
+                        ),
+                      );
+                    },
                           child: Text(
                             "Sign Up".tr,
                             style: Theme.of(context)

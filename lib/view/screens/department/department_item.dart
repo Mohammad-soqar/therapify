@@ -1,10 +1,12 @@
-import 'package:therapify/res/routes/routes_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:therapify/data/static/department_data.dart';
 import 'package:therapify/res/colors/app_colors.dart';
+import 'package:therapify/view/screens/doctor/doctor_list_screen.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 import 'package:get/get.dart';
+import 'package:therapify/viewmodels/doctor_list_viewmodel.dart';
 
 class DepartmentItem extends StatelessWidget {
   const DepartmentItem({super.key, required this.item});
@@ -14,7 +16,17 @@ class DepartmentItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.toNamed(RoutesName.doctorListScreen);
+        
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ChangeNotifierProvider(
+  create: (_) => DoctorListViewModel(),
+  child: const DoctorListScreen(),
+)
+                        ),
+                      );
+                    
       },
       child: Container(
         constraints: BoxConstraints(minWidth: 90.w),

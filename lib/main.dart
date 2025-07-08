@@ -1,11 +1,11 @@
-// lib/main.dart
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:provider/provider.dart';
+
 import 'package:therapify/res/localization/languages.dart';
 import 'package:therapify/res/routes/routes.dart';
 import 'package:therapify/res/themes/theme.dart';
@@ -13,14 +13,13 @@ import 'package:therapify/res/themes/theme_service.dart';
 import 'package:therapify/view/screens/auth/signin_screen.dart';
 import 'package:therapify/view/screens/home/home_screen.dart';
 import 'package:therapify/viewmodels/controllers/app_controller.dart';
-
+import 'package:therapify/viewmodels/doctor_list_viewmodel.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase using google-services.json
+  // Initialize Firebase
   await Firebase.initializeApp();
 
-  // Your existing initializations
   await ScreenUtil.ensureScreenSize();
   await GetStorage.init();
 
@@ -32,7 +31,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Put your AppController into GetX dependency system
+    // Inject global AppController
     Get.put(AppController());
 
     return ScreenUtilInit(
@@ -54,7 +53,6 @@ class MyApp extends StatelessWidget {
                 darkTheme: AppTheme.dark,
                 themeMode: ThemeService().getThemeMode(),
                 home: const AuthWrapper(),
-                getPages: AppRoutes.appRoutes(),
               );
             },
           );
@@ -74,12 +72,16 @@ class AuthWrapper extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-              body: Center(child: CircularProgressIndicator()));
+            body: Center(child: CircularProgressIndicator()),
+          );
         } else {
           if (snapshot.hasData) {
-            return const HomeScreen(); // User is signed in, show Home View
+            return ChangeNotifierProvider(
+              create: (_) => DoctorListViewModel(),
+              child: const HomeScreen(),
+            );
           }
-          return const SignInScreen(); // Show Splash Screen
+          return const SignInScreen();
         }
       },
     );

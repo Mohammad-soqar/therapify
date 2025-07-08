@@ -1,5 +1,5 @@
-import 'package:therapify/res/routes/routes_name.dart';
 import 'package:therapify/utils/utils.dart';
+import 'package:therapify/view/screens/appointment/appointment_countdown_screen.dart';
 import 'package:therapify/view/widgets/appbar.dart';
 import 'package:therapify/view/widgets/back_button.dart';
 import 'package:therapify/view/widgets/section_header_with_line.dart';
@@ -31,7 +31,10 @@ class _AppointmentDetailsScreen extends State<AppointmentDetailsScreen> with Sin
         child: AppButton(
           title: "Video Call (Start at 10.30 AM)",
           onPress: () {
-            Get.toNamed(RoutesName.appointmentCountdownScreen);
+              Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const AppointmentCountdownScreen()));;
           },
           bgColor: AppColors.primaryColor,
           icon: const Icon(Icons.videocam, color: AppColors.whiteColor),

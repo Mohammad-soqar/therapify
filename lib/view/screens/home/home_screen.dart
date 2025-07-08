@@ -7,17 +7,20 @@ import 'package:get/get.dart';
 import 'package:therapify/data/static/department_data.dart';
 import 'package:therapify/data/static/doctor_data.dart';
 import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/res/routes/routes_name.dart';
 import 'package:therapify/utils/utils.dart';
+import 'package:therapify/view/screens/appointment/appointment_list_screen.dart';
 import 'package:therapify/view/screens/department/department_item.dart';
 import 'package:therapify/view/screens/doctor/doctor_filter_sheet.dart';
 import 'package:therapify/view/screens/doctor/doctor_item.dart';
+import 'package:therapify/view/screens/doctor/doctor_list_screen.dart';
 import 'package:therapify/view/screens/home/notification_button.dart';
 import 'package:therapify/view/screens/messaging/messages_screen.dart';
 import 'package:therapify/view/widgets/input_decoration.dart';
 import 'package:therapify/view/widgets/side_drawer.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 import 'package:therapify/viewmodels/controllers/app_controller.dart';
+import 'package:provider/provider.dart';
+import 'package:therapify/viewmodels/doctor_list_viewmodel.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -189,7 +192,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 InkWell(
-                  onTap: () => Get.toNamed(RoutesName.appointmentListScreen),
+                  onTap: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const AppointmentListScreen()));
+                  },
                   child: Text(
                     "See All",
                     style: Theme.of(context)
@@ -308,7 +316,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 InkWell(
-                  onTap: () => Get.toNamed(RoutesName.doctorListScreen),
+onTap: () {
+  Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (_) => ChangeNotifierProvider(
+            create: (_) => DoctorListViewModel(),
+            child: const DoctorListScreen(),
+          ),
+      ),
+  );
+                  },
                   child: Text(
                     "See All",
                     style: Theme.of(context)
@@ -353,9 +371,15 @@ class SpecialistsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<DoctorListViewModel>(context);
     final isTabletDevice = isTablet(context);
     final doctorDisplayCount = isTabletDevice ? 6 : 3;
-    final limitedDoctors = doctorData.take(doctorDisplayCount).toList();
+
+    if (viewModel.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final doctors = viewModel.doctors.take(doctorDisplayCount).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -368,7 +392,17 @@ class SpecialistsSection extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             InkWell(
-              onTap: () => Get.toNamed(RoutesName.doctorListScreen),
+              onTap: () {
+Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+        builder: (_) => ChangeNotifierProvider(
+          create: (_) => DoctorListViewModel(),
+          child: const DoctorListScreen(),
+        ),
+    ),
+);
+              },
               child: Text(
                 "See All",
                 style: Theme.of(context)
@@ -380,11 +414,12 @@ class SpecialistsSection extends StatelessWidget {
           ],
         ),
         const VSpace(15),
-        //TODO: Replace with actual doctor items
-        Column(
-          children:
-              limitedDoctors.map((item) => DoctorItem(item: item)).toList(),
-        ),
+        doctors.isEmpty
+            ? Text("No doctors available")
+            : Column(
+                children:
+                    doctors.map((item) => DoctorItem(item: item)).toList(),
+              ),
       ],
     );
   }

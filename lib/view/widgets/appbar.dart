@@ -15,7 +15,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final bool? centerTitle;
   final Color bgColor;
-  final List<Widget>? leading;
+  final List<Widget>? leading; // ✅ keeps your existing code working
   final List<Widget>? action;
   final PreferredSizeWidget? bottom;
 
@@ -27,9 +27,16 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       child: AppBar(
         surfaceTintColor: Colors.transparent,
         title: Text(title, style: Theme.of(context).textTheme.titleLarge),
-        elevation: 0, // Remove the shadow
+        elevation: 0,
         centerTitle: centerTitle,
-        leading: Row(children: leading ?? []),
+        leading: leading != null && leading!.isNotEmpty
+            ? Builder(
+                builder: (context) => Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: leading!,
+                ),
+              )
+            : null,
         actions: action,
         bottom: bottom,
       ),

@@ -1,4 +1,4 @@
-import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/view/screens/payment/payment_preview_screen.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -71,8 +71,10 @@ void showCustomModalBottomSheet(BuildContext context) {
                       child: Checkbox(
                         checkColor: AppColors.whiteColor,
                         activeColor: AppColors.primaryColor,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3.r)),
-                        visualDensity: const VisualDensity(horizontal: -4.0, vertical: -4.0), // adjust padding
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(3.r)),
+                        visualDensity: const VisualDensity(
+                            horizontal: -4.0, vertical: -4.0), // adjust padding
                         side: BorderSide(color: AppColors.getBorderColor()),
                         value: isRemember,
                         onChanged: (bool? value) {
@@ -89,7 +91,14 @@ void showCustomModalBottomSheet(BuildContext context) {
                 VSpace(30.h),
                 AppButton(
                     title: "Make Payment",
-                    onPress: () => Get.toNamed(RoutesName.paymentPreviewScreen),
+                    onPress: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PaymentPreviewScreen(),
+                        ),
+                      );
+                    },
                     width: double.infinity,
                     bgColor: AppColors.primaryColor)
               ],

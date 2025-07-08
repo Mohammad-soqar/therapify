@@ -1,4 +1,5 @@
-import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/view/screens/appointment/session_complete_screen.dart';
+import 'package:therapify/view/screens/call/call_screen.dart';
 import 'package:therapify/view/widgets/appbar.dart';
 import 'package:therapify/view/widgets/back_button.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,7 +27,12 @@ class _AppointmentCountdownScreen extends State<AppointmentCountdownScreen> with
         if (counter > 0) {
           initCounter();
         } else {
-          Get.toNamed(RoutesName.callScreen, arguments: "testVideoCall540");
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const CallScreen(),
+            ),
+          );
         }
       });
     });
@@ -153,7 +159,14 @@ class _AppointmentCountdownScreen extends State<AppointmentCountdownScreen> with
                   ),
                   VSpace(20.h),
                   InkWell(
-                    onTap: () => Get.toNamed(RoutesName.sessionCompleteScreen),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SessionCompleteScreen(),
+                        ),
+                      );
+                    },
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                       decoration: BoxDecoration(

@@ -1,8 +1,10 @@
-import 'package:therapify/res/routes/routes_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:get/get.dart';
+import 'package:therapify/view/screens/doctor/doctor_list_screen.dart';
+import 'package:therapify/viewmodels/doctor_list_viewmodel.dart';
 
 class WishlistButton extends StatelessWidget {
   const WishlistButton({super.key, required this.cartCount});
@@ -12,7 +14,17 @@ class WishlistButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.toNamed(RoutesName.doctorListScreen),
+      onTap: () => {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ChangeNotifierProvider(
+  create: (_) => DoctorListViewModel(),
+  child: const DoctorListScreen(),
+)
+                        ),
+                      )
+                    },
       child: Container(
         padding: EdgeInsets.all(8.r),
         decoration: BoxDecoration(

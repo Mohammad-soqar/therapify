@@ -1,5 +1,4 @@
 import 'package:circular_seek_bar/circular_seek_bar.dart';
-import 'package:therapify/res/routes/routes_name.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -87,7 +86,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     InkWell(
                         onTap: () {
                           _markOnboardingAsShown();
-                          Get.offAllNamed(RoutesName.signInScreen);
+                          {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SignInScreen(),
+                        ),
+                      );
+                    }
                         },
                         child: const Text("Skip")),
                   ],

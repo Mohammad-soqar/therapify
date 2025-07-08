@@ -1,6 +1,7 @@
-import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/data/models/DoctorModel.dart';
 import 'package:therapify/utils/utils.dart';
-import 'package:therapify/view/screens/doctor/doctor_experience_tab.dart';
+import 'package:therapify/view/screens/appointment/appointment_booking_screen.dart';
+import 'package:therapify/view/screens/call/call_screen.dart';
 import 'package:therapify/view/screens/doctor/doctor_info_tab.dart';
 import 'package:therapify/view/screens/doctor/doctor_review_tab.dart';
 import 'package:therapify/view/widgets/appbar.dart';
@@ -9,11 +10,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:therapify/data/static/doctor_data.dart';
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:therapify/utils/whatsapp_launcher.dart';
+
 
 class DoctorDetailsScreen extends StatefulWidget {
   const DoctorDetailsScreen({super.key});
@@ -24,52 +26,64 @@ class DoctorDetailsScreen extends StatefulWidget {
 
 class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
-  final List<dynamic> _tabButtons = ["Info", "Experience", "Reviews"];
+  final List<dynamic> _tabButtons = ["Info", "Reviews"];
 
   @override
   Widget build(BuildContext context) {
-    DoctorModel item = Get.arguments;
+    final DoctorModel item = Get.arguments as DoctorModel;
 
     final List<Widget> _tabs = [
       const DoctorInfoTab(),
-      DoctorExperienceTab(experienceList: item.experience),
       const DoctorReviewsTab(),
     ];
 
     return Scaffold(
       bottomNavigationBar: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 12.h),
-        decoration: BoxDecoration(
-          color: AppColors.getContainerColor(),
-          boxShadow: Utils.defaultBoxShadow(),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: AppButton(
-                title: "Book Appointment",
-                onPress: () {
-                  Get.toNamed(RoutesName.appointmentBookingScreen);
-                },
-                bgColor: AppColors.getContainerColor(),
-                borderColor: AppColors.primaryColor,
-                textColor: AppColors.getTitleColor(),
+  padding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 12.h),
+  decoration: BoxDecoration(
+    color: AppColors.getContainerColor(),
+    boxShadow: Utils.defaultBoxShadow(),
+  ),
+  child: Row(
+    children: [
+      // Book Appointment Button
+      Expanded(
+        child: AppButton(
+          title: "Book Appointment",
+          onPress: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const AppointmentBookingScreen(),
               ),
-            ),
-            HSpace(10.h),
-            Expanded(
-              child: AppButton(
-                title: "See Doctor Now",
-                onPress: () {
-                  Get.toNamed(RoutesName.callScreen, arguments: "testVideoCall540");
-                },
-                bgColor: AppColors.successColor,
-                icon: const Icon(Icons.videocam, color: AppColors.whiteColor),
-              ),
-            ),
-          ],
+            );
+          },
+          bgColor: AppColors.getContainerColor(),
+          borderColor: AppColors.primaryColor,
+          textColor: AppColors.getTitleColor(),
         ),
       ),
+      HSpace(10.h),
+
+      // See Doctor Now (WhatsApp) Button
+      Expanded(
+        child: AppButton(
+          title: "See Doctor Now",
+          onPress: () {
+            final phone = item.phoneNumber ?? '';
+            openWhatsAppChat(
+              phone,
+              message: "Hello Dr. ${item.name}, I’d like to talk now.",
+            );
+          },
+          bgColor: AppColors.successColor,
+          icon: const Icon(Icons.videocam, color: AppColors.whiteColor),
+        ),
+      ),
+    ],
+  ),
+),
+
       appBar: CustomAppbar(
         leading: const [GetBackButton()],
         title: "Specialist Details",
@@ -131,8 +145,9 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerP
                         height: 100.r,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(50.r),
-                          child: Image.asset(
-                            item.image,
+                          child: Image.
+                          asset(
+                             "assets/images/doctor_placeholder.png",
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -163,7 +178,7 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerP
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item.name,
+                            item.name!,
                             style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.getTitleColor()),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -174,7 +189,7 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerP
                               Icon(CupertinoIcons.star_fill, color: AppColors.warningColor, size: 14.sp),
                               HSpace(5.w),
                               Text(
-                                "${item.averageRating.toString()}  (${item.review.toString()} reviews)",
+                                "${item.rating?.toStringAsFixed(1) ?? 'N/A'}",
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium!
@@ -184,7 +199,7 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen> with SingleTickerP
                           ),
                           VSpace(8.h),
                           Text(
-                            item.specialty,
+                            item.category ?? "Unknown",
                             style: Theme.of(context).textTheme.bodySmall,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,

@@ -1,5 +1,5 @@
-import 'package:therapify/res/routes/routes_name.dart';
 import 'package:therapify/utils/utils.dart';
+import 'package:therapify/view/screens/doctor/doctor_review_screen.dart';
 import 'package:therapify/view/widgets/appbar.dart';
 import 'package:therapify/view/widgets/back_button.dart';
 import 'package:therapify/view/widgets/section_header_with_line.dart';
@@ -129,7 +129,10 @@ class _AppointmentHistoryScreen extends State<AppointmentHistoryScreen> with Sin
                   ),
                 ),
                 subtitle: InkWell(
-                  onTap: () => Get.toNamed(RoutesName.doctorReviewScreen),
+                  onTap: () {  Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const DoctorReviewScreen()));},
                   child: Text(
                     "Make review",
                     maxLines: 1,

@@ -121,6 +121,7 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
       await _doctorService.saveDoctor(
         DoctorModel(
           doctorId: uid,
+          name: _nameCtrl.text.trim(),
           category: _categoryCtrl.text.trim(),
           consultationFee: double.parse(_consultFeeCtrl.text.trim()),
           netConsultationFee: double.parse(_netFeeCtrl.text.trim()),
@@ -128,6 +129,11 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
           availabilityDate: dateStr,
           availabilityTime: timeStr,
           location: _locationCtrl.text.trim(),
+          phoneNumber: "${phoneCode}${_phoneCtrl.text.trim()}",
+          rating: 0.0, // ✅ fixed
+          imageUrl: "",
+          specialization: _categoryCtrl.text.trim(),
+          schedule: [],
         ),
         uid,
       );

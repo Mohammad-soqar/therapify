@@ -1,4 +1,3 @@
-import 'package:therapify/res/routes/routes_name.dart';
 import 'package:therapify/viewmodels/controllers/app_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +19,14 @@ class _GetBackButtonState extends State<GetBackButton> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        isBottomNav ? Get.offAllNamed(RoutesName.bottomNavScreen) : Get.back();
+        isBottomNav
+            ? Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const BottomAppBar(),
+                ),
+              )
+            : Get.back();
       },
       child: Container(
           width: 38.r,
@@ -31,7 +37,9 @@ class _GetBackButtonState extends State<GetBackButton> {
             border: Border.all(color: AppColors.getBorderColor()),
           ),
           child: Icon(
-            Get.find<AppController>().isRtl() ? CupertinoIcons.arrow_right : CupertinoIcons.arrow_left,
+            Get.find<AppController>().isRtl()
+                ? CupertinoIcons.arrow_right
+                : CupertinoIcons.arrow_left,
             color: AppColors.getTitleColor(),
             size: 18.sp,
           )),

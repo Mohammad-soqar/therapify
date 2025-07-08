@@ -1,10 +1,10 @@
-import 'package:therapify/view/screens/wishlist/wishlist_item.dart';
-import 'package:therapify/view/widgets/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:therapify/data/static/doctor_data.dart';
+import 'package:therapify/data/models/DoctorModel.dart';
+import 'package:therapify/view/screens/wishlist/wishlist_item.dart';
 import 'package:therapify/view/widgets/appbar.dart';
 import 'package:therapify/view/widgets/back_button.dart';
+import 'package:therapify/view/widgets/spacing.dart';
 
 class WishlistScreen extends StatefulWidget {
   const WishlistScreen({super.key});
@@ -13,10 +13,12 @@ class WishlistScreen extends StatefulWidget {
   State<WishlistScreen> createState() => _WishlistScreenState();
 }
 
-class _WishlistScreenState extends State<WishlistScreen> with SingleTickerProviderStateMixin {
+class _WishlistScreenState extends State<WishlistScreen> {
+  final List<DoctorModel> _wishlistDoctors = []; // TODO: Replace with Firestore or local DB
+
   void _removeItem(int index) {
     setState(() {
-      doctorData.removeAt(index);
+      _wishlistDoctors.removeAt(index);
     });
   }
 
@@ -27,16 +29,16 @@ class _WishlistScreenState extends State<WishlistScreen> with SingleTickerProvid
         title: "Wishlist",
         leading: [GetBackButton()],
       ),
-      body: doctorData.isNotEmpty
+      body: _wishlistDoctors.isNotEmpty
           ? SingleChildScrollView(
               padding: EdgeInsets.all(20.r),
               child: ListView.builder(
                 padding: EdgeInsets.zero,
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: doctorData.length,
+                itemCount: _wishlistDoctors.length,
                 itemBuilder: (context, index) {
-                  var item = doctorData[index];
+                  var item = _wishlistDoctors[index];
                   return WishlistItem(
                     item: item,
                     onDelete: () => _removeItem(index),
