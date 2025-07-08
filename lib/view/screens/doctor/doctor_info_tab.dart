@@ -22,18 +22,7 @@ class DoctorInfoTab extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Icon(Ionicons.videocam, size: 18.sp, color: AppColors.primaryColor),
-                  HSpace(6.w),
-                  const Text("Instant Consultation Time"),
-                ],
-              ),
-              VSpace(8.h),
-              const Text("Mon (3 PM - 11.55 PM)"),
-              VSpace(8.h),
-              const Text("Wed (3 PM - 11.55 PM)"),
-              VSpace(30.h),
+            
               Row(
                 children: [
                   Icon(Ionicons.calendar, size: 18.sp, color: AppColors.primaryColor),
