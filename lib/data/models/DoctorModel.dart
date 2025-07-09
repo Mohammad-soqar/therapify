@@ -9,13 +9,16 @@ class DoctorModel {
   final String availabilityDate;
   final String availabilityTime;
   final String location;
-  final String? imageUrl; // Now nullable
-  final String? specialization; // Now nullable
-  final double? rating; // Nullable & flagged
-  final String? category; // Nullable & flagged
+  final String? imageUrl;
+  final String? specialization;
+  final double? rating;
+  final String? category;
   final String phoneNumber;
   final List<ScheduleModel> schedule;
-
+  final String? workplace;
+  final String? bio;
+  final String? workingIn;
+  final int averageConsultationTime;
 
   DoctorModel({
     required this.doctorId,
@@ -27,11 +30,15 @@ class DoctorModel {
     required this.availabilityTime,
     required this.location,
     required this.phoneNumber,
+    this.bio,
+    this.workingIn,
+    this.workplace,
     this.imageUrl,
     this.specialization,
     this.rating,
     this.category,
     required this.schedule,
+    required this.averageConsultationTime,
   });
 
   factory DoctorModel.fromJson(Map<String, dynamic> json) {
@@ -49,10 +56,14 @@ class DoctorModel {
       rating: (json['rating'] != null) ? (json['rating'] as num).toDouble() : null,
       category: json['category'],
       phoneNumber: json['phoneNumber'],
+      workplace: json['workplace'],
+      bio: json['bio'],
+      workingIn: json['workingIn'],
       schedule: (json['schedule'] as List<dynamic>?)
               ?.map((e) => ScheduleModel.fromJson(e))
               .toList() ??
           [],
+      averageConsultationTime: json['averageConsultationTime'] ?? 30,
     );
   }
 
@@ -70,6 +81,9 @@ class DoctorModel {
         'rating': rating,
         'category': category,
         'phoneNumber': phoneNumber,
+        'bio': bio,
+        'workingIn': workingIn,
         'schedule': schedule.map((e) => e.toJson()).toList(),
+        'averageConsultationTime': averageConsultationTime,
       };
 }

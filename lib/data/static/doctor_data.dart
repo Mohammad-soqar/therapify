@@ -26,5 +26,6 @@ List<DoctorModel> doctorData = [
         timeSlots: ['1:00 PM', '2:00 PM'],
       ),
     ],
+    averageConsultationTime: 30,
   ),
 ];

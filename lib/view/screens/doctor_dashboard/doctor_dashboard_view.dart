@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'doctor_dashboard_viewmodel.dart';
@@ -82,16 +84,22 @@ class DashboardTab extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _StatCard(label: "Patients", value: stats.totalPatients.toString()),
-              _StatCard(label: "Appointments", value: stats.totalAppointments.toString()),
-              _StatCard(label: "Earnings", value: "\$${stats.totalEarnings.toStringAsFixed(0)}"),
+              _StatCard(
+                  label: "Patients", value: stats.totalPatients.toString()),
+              _StatCard(
+                  label: "Appointments",
+                  value: stats.totalAppointments.toString()),
+              _StatCard(
+                  label: "Earnings",
+                  value: "\$${stats.totalEarnings.toStringAsFixed(0)}"),
             ],
           ),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Available to take appointments", style: TextStyle(fontSize: 16)),
+              const Text("Available to take appointments",
+                  style: TextStyle(fontSize: 16)),
               Switch(
                 value: stats.isAvailable,
                 onChanged: (val) => viewModel.toggleAvailability(),
@@ -99,7 +107,8 @@ class DashboardTab extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 30),
-          const Text("Recent Patients", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text("Recent Patients",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           ...recentPatients.map((patient) {
             return Card(
@@ -110,7 +119,8 @@ class DashboardTab extends StatelessWidget {
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Open patient details coming soon.")),
+                    SnackBar(
+                        content: Text("Open patient details coming soon.")),
                   );
                 },
               ),
@@ -170,8 +180,10 @@ class AppointmentsTab extends StatelessWidget {
       itemCount: appointments.length,
       itemBuilder: (context, index) {
         final appt = appointments[index];
-        final formattedDate = "${appt.dateTime.day}/${appt.dateTime.month}/${appt.dateTime.year}";
-        final formattedTime = "${appt.dateTime.hour.toString().padLeft(2, '0')}:${appt.dateTime.minute.toString().padLeft(2, '0')}";
+        final formattedDate =
+            "${appt.dateTime.day}/${appt.dateTime.month}/${appt.dateTime.year}";
+        final formattedTime =
+            "${appt.dateTime.hour.toString().padLeft(2, '0')}:${appt.dateTime.minute.toString().padLeft(2, '0')}";
 
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 8),
@@ -330,15 +342,56 @@ class SettingsTab extends StatefulWidget {
 }
 
 class _SettingsTabState extends State<SettingsTab> {
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _workingInController = TextEditingController();
+
   TimeOfDay _startTime = const TimeOfDay(hour: 9, minute: 0);
   TimeOfDay _endTime = const TimeOfDay(hour: 17, minute: 0);
+
   bool _isAvailable = true;
+  String _doctorName = "";
+
+  int _selectedConsultationTime = 30;
+  final List<int> _consultationTimeOptions = [15, 30, 45, 60];
 
   @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _loadDoctorData();
+  }
+
+  Future<void> _loadDoctorData() async {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final doc = await FirebaseFirestore.instance
+        .collection('doctors')
+        .doc(userId)
+        .get();
+    final data = doc.data();
+    if (data != null) {
+      setState(() {
+        _doctorName = data['name'] ?? '';
+        _bioController.text = data['bio'] ?? '';
+        _workingInController.text = data['workingIn'] ?? '';
+        _selectedConsultationTime = data['averageConsultationTime'] ?? 30;
+      });
+    }
+  }
+
+  Future<void> _saveSettings() async {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    await FirebaseFirestore.instance.collection('doctors').doc(userId).update({
+      'bio': _bioController.text,
+      'workingIn': _workingInController.text,
+      'averageConsultationTime': _selectedConsultationTime,
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          "Settings saved successfully (Consultation time: $_selectedConsultationTime min)",
+        ),
+      ),
+    );
   }
 
   Future<void> _pickTime(BuildContext context, bool isStart) async {
@@ -363,17 +416,20 @@ class _SettingsTabState extends State<SettingsTab> {
       padding: const EdgeInsets.all(20),
       child: ListView(
         children: [
-          const Text("Profile Name", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const Text("Profile Name",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           TextField(
-            controller: _nameController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: "Enter your name",
+            readOnly: true,
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              hintText: _doctorName.isEmpty ? "Loading..." : _doctorName,
             ),
           ),
           const SizedBox(height: 20),
-          const Text("Availability", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+
+          const Text("Availability",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -381,51 +437,96 @@ class _SettingsTabState extends State<SettingsTab> {
               const Text("Available for appointments"),
               Switch(
                 value: _isAvailable,
-                onChanged: (val) {
-                  setState(() {
-                    _isAvailable = val;
-                  });
-                },
+                onChanged: (val) => setState(() => _isAvailable = val),
               ),
             ],
           ),
+
+          if (_isAvailable) ...[
+            const SizedBox(height: 20),
+            const Text("Available Time Slot",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  children: [
+                    const Text("Start Time"),
+                    ElevatedButton(
+                      onPressed: () => _pickTime(context, true),
+                      child: Text(_startTime.format(context)),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    const Text("End Time"),
+                    ElevatedButton(
+                      onPressed: () => _pickTime(context, false),
+                      child: Text(_endTime.format(context)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+
           const SizedBox(height: 20),
-          const Text("Available Time Slot", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const Text("Average Consultation Time",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Column(
-                children: [
-                  const Text("Start Time"),
-                  ElevatedButton(
-                    onPressed: () => _pickTime(context, true),
-                    child: Text(_startTime.format(context)),
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  const Text("End Time"),
-                  ElevatedButton(
-                    onPressed: () => _pickTime(context, false),
-                    child: Text(_endTime.format(context)),
-                  ),
-                ],
-              ),
-            ],
+          DropdownButtonFormField<int>(
+            value: _selectedConsultationTime,
+            decoration: const InputDecoration(border: OutlineInputBorder()),
+            onChanged: (value) {
+              if (value != null) {
+                setState(() {
+                  _selectedConsultationTime = value;
+                });
+              }
+            },
+            items: _consultationTimeOptions.map((int time) {
+              return DropdownMenuItem<int>(
+                value: time,
+                child: Text('$time minutes'),
+              );
+            }).toList(),
           ),
+
+          const SizedBox(height: 20),
+          const Text("Working In",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _workingInController,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: "Where do you currently work?",
+            ),
+          ),
+
+          const SizedBox(height: 20),
+          const Text("Bio",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _bioController,
+            maxLines: 3,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: "Write a short bio",
+            ),
+          ),
+
           const SizedBox(height: 30),
           ElevatedButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Settings saved (locally only)")),
-              );
-            },
+            onPressed: _saveSettings,
             child: const Text("Save Settings"),
-          )
+          ),
         ],
       ),
     );
   }
 }
+

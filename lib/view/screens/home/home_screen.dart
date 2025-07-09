@@ -193,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 InkWell(
                   onTap: () {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (_) => const AppointmentListScreen()));
@@ -317,7 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 InkWell(
 onTap: () {
-  Navigator.pushReplacement(
+  Navigator.push(
       context,
       MaterialPageRoute(
           builder: (_) => ChangeNotifierProvider(
@@ -393,7 +393,7 @@ class SpecialistsSection extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-Navigator.pushReplacement(
+Navigator.push(
     context,
     MaterialPageRoute(
         builder: (_) => ChangeNotifierProvider(
