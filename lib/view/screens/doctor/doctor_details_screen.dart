@@ -33,7 +33,7 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen>
     final DoctorModel item = Get.arguments as DoctorModel;
 
     final List<Widget> _tabs = [
-      const DoctorInfoTab(),
+      DoctorInfoTab(item: item),
       const DoctorReviewsTab(),
     ];
 
@@ -220,46 +220,46 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen>
               ],
             ),
             VSpace(20.h),
-            Row(
+                        Row(
               children: [
                 RichText(
                   text: TextSpan(
-                      text: "Working in ",
-                      style: Theme.of(context).textTheme.bodyMedium),
+                    text: "Consultation Fee:  ",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ),
                 RichText(
                   text: TextSpan(
-                      text: "Dhaka Civil Surgeon Office",
-                      style: Theme.of(context).textTheme.bodyLarge),
+                    text: "\$${item.consultationFee.toStringAsFixed(2)} (Inc. VAT)",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: AppColors.primaryColor),
+                  ),
                 ),
               ],
             ),
-            VSpace(10.h),
+            VSpace(8.h),
             Row(
               children: [
-                RichText(
-                  text: TextSpan(
-                      text: "Consultation Fee:  ",
-                      style: Theme.of(context).textTheme.bodyMedium),
-                ),
-                RichText(
-                  text: TextSpan(
-                      text: "\$20 (Inc. VAT)",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(color: AppColors.primaryColor)),
+                const Icon(Icons.access_time, size: 18),
+                SizedBox(width: 6.w),
+                Text(
+                  "${item.averageConsultationTime} min session",
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
             ),
             VSpace(20.h),
+
             Container(
               height: 56.h,
               padding: EdgeInsets.symmetric(horizontal: 6.w),
               width: double.infinity,
               decoration: BoxDecoration(
-                  color: AppColors.getContainerColor(),
-                  borderRadius: BorderRadius.circular(6.r)),
+                color: AppColors.getContainerColor(),
+                borderRadius: BorderRadius.circular(6.r),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: _tabButtons.asMap().entries.map((entry) {
@@ -296,6 +296,7 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen>
               ),
             ),
             VSpace(20.h),
+
             _tabs[_selectedIndex],
           ],
         ),

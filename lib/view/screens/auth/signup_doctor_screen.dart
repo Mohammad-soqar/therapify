@@ -130,6 +130,10 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
           availabilityTime: timeStr,
           location: _locationCtrl.text.trim(),
           phoneNumber: "${phoneCode}${_phoneCtrl.text.trim()}",
+          workplace: "",
+          bio: "",
+          workingIn: "",
+          averageConsultationTime: 15, // Default value, can be adjusted later
           rating: 0.0, // ✅ fixed
           imageUrl: "",
           specialization: _categoryCtrl.text.trim(),
