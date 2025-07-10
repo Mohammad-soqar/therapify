@@ -19,6 +19,7 @@ class DoctorModel {
   final String? bio;
   final String? workingIn;
   final int averageConsultationTime;
+  final bool isAvailable;
 
   DoctorModel({
     required this.doctorId,
@@ -30,6 +31,9 @@ class DoctorModel {
     required this.availabilityTime,
     required this.location,
     required this.phoneNumber,
+    required this.schedule,
+    required this.averageConsultationTime,
+    required this.isAvailable,
     this.bio,
     this.workingIn,
     this.workplace,
@@ -37,8 +41,6 @@ class DoctorModel {
     this.specialization,
     this.rating,
     this.category,
-    required this.schedule,
-    required this.averageConsultationTime,
   });
 
   factory DoctorModel.fromJson(Map<String, dynamic> json) {
@@ -64,6 +66,7 @@ class DoctorModel {
               .toList() ??
           [],
       averageConsultationTime: json['averageConsultationTime'] ?? 30,
+      isAvailable: json['isAvailable'] ?? false,
     );
   }
 
@@ -83,7 +86,9 @@ class DoctorModel {
         'phoneNumber': phoneNumber,
         'bio': bio,
         'workingIn': workingIn,
+        'workplace': workplace,
         'schedule': schedule.map((e) => e.toJson()).toList(),
         'averageConsultationTime': averageConsultationTime,
+        'isAvailable': isAvailable,
       };
 }

@@ -162,7 +162,7 @@ class _DoctorReviewScreenState extends State<DoctorReviewScreen> {
                   child: AppButton(
                     title: "Submit",
                     onPress: () {
-                       Navigator.pushReplacement(
+                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => const BottomAppBar(),

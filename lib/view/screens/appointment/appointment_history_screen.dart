@@ -129,7 +129,7 @@ class _AppointmentHistoryScreen extends State<AppointmentHistoryScreen> with Sin
                   ),
                 ),
                 subtitle: InkWell(
-                  onTap: () {  Navigator.pushReplacement(
+                  onTap: () {  Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (_) => const DoctorReviewScreen()));},

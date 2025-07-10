@@ -31,7 +31,7 @@ class _AppointmentDetailsScreen extends State<AppointmentDetailsScreen> with Sin
         child: AppButton(
           title: "Video Call (Start at 10.30 AM)",
           onPress: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (_) => const AppointmentCountdownScreen()));;

@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'doctor_dashboard_viewmodel.dart';
 import 'package:therapify/view/screens/doctor_dashboard/doctor_dashboard_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DoctorDashboardView extends StatelessWidget {
   const DoctorDashboardView({super.key});
@@ -204,7 +208,7 @@ class AppointmentsTab extends StatelessWidget {
     );
   }
 }
-
+// ✅ PATIENTS TAB
 class PatientsTab extends StatelessWidget {
   const PatientsTab({super.key});
 
@@ -245,7 +249,7 @@ class PatientsTab extends StatelessWidget {
     );
   }
 }
-
+// ✅ PATIENT NOTE DIALOG
 class PatientNoteDialog extends StatefulWidget {
   final Patient patient;
 
@@ -296,7 +300,7 @@ class _PatientNoteDialogState extends State<PatientNoteDialog> {
     );
   }
 }
-
+// ✅ NOTIFICATION DIALOG
 class NotificationDialog extends StatelessWidget {
   const NotificationDialog({super.key});
 
@@ -333,7 +337,7 @@ class NotificationDialog extends StatelessWidget {
     );
   }
 }
-
+// ✅ SETTINGS TAB
 class SettingsTab extends StatefulWidget {
   const SettingsTab({super.key});
 
@@ -373,24 +377,68 @@ class _SettingsTabState extends State<SettingsTab> {
         _bioController.text = data['bio'] ?? '';
         _workingInController.text = data['workingIn'] ?? '';
         _selectedConsultationTime = data['averageConsultationTime'] ?? 30;
+        _isAvailable = data['isAvailable'] ?? true;
       });
     }
   }
 
   Future<void> _saveSettings() async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
+
+    final now = DateTime.now();
+    final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+    final DateFormat dayFormat = DateFormat('EEEE');
+
+    List<Map<String, dynamic>> schedule = [];
+
+    if (_isAvailable) {
+      for (int i = 0; i < 7; i++) {
+        final currentDate = now.add(Duration(days: i));
+        final formattedDate = dateFormat.format(currentDate);
+        final formattedDay = dayFormat.format(currentDate);
+
+        List<String> slots = [];
+        DateTime slotTime = DateTime(
+          currentDate.year,
+          currentDate.month,
+          currentDate.day,
+          _startTime.hour,
+          _startTime.minute,
+        );
+
+        final endSlotTime = DateTime(
+          currentDate.year,
+          currentDate.month,
+          currentDate.day,
+          _endTime.hour,
+          _endTime.minute,
+        );
+
+        while (slotTime.isBefore(endSlotTime)) {
+          slots.add(DateFormat('HH:mm').format(slotTime));
+          slotTime = slotTime.add(Duration(minutes: _selectedConsultationTime));
+        }
+
+        schedule.add({
+          'day': formattedDay,
+          'date': formattedDate,
+          'timeSlots': slots,
+        });
+      }
+    }
+
     await FirebaseFirestore.instance.collection('doctors').doc(userId).update({
       'bio': _bioController.text,
       'workingIn': _workingInController.text,
       'averageConsultationTime': _selectedConsultationTime,
+      'isAvailable': _isAvailable,
+      'availabilityDate': dateFormat.format(now),
+      'availabilityTime': _startTime.format(context),
+      'schedule': schedule,
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "Settings saved successfully (Consultation time: $_selectedConsultationTime min)",
-        ),
-      ),
+      SnackBar(content: Text("Settings saved successfully")),
     );
   }
 
@@ -529,4 +577,3 @@ class _SettingsTabState extends State<SettingsTab> {
     );
   }
 }
-

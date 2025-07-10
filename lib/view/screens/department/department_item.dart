@@ -17,7 +17,7 @@ class DepartmentItem extends StatelessWidget {
     return InkWell(
       onTap: () {
         
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => ChangeNotifierProvider(

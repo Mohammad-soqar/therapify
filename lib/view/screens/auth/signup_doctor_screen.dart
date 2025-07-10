@@ -136,6 +136,7 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
           averageConsultationTime: 15, // Default value, can be adjusted later
           rating: 0.0, // ✅ fixed
           imageUrl: "",
+          isAvailable: true, // ✅ fixed
           specialization: _categoryCtrl.text.trim(),
           schedule: [],
         ),

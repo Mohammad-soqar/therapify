@@ -1,12 +1,11 @@
-// lib/ui/navigation/routes.dart
-
 import 'package:get/get.dart';
 import 'package:therapify/view/screens/auth/signin_screen.dart';
 import 'package:therapify/view/screens/auth/signup_screen.dart';
 import 'package:therapify/view/screens/auth/signin_doctor_screen.dart';
 import 'package:therapify/view/screens/auth/signup_doctor_screen.dart';
-import 'package:therapify/view/screens/home/home_screen.dart';
 import 'package:therapify/res/routes/routes_name.dart';
+import 'package:therapify/view/widgets/bottom_nav.dart'; // ✅ this is the nav bar wrapper
+import 'package:therapify/view/screens/payment/payment_success_screen.dart'; // ✅ added for success screen
 
 class AppPages {
   static final getPages = [
@@ -28,7 +27,11 @@ class AppPages {
     ),
     GetPage(
       name: RoutesName.homeScreen,
-      page: () => const HomeScreen(),
+      page: () => const BottomNavbar(), // ✅ bottom navbar wrapper
+    ),
+    GetPage(
+      name: RoutesName.paymentSuccessScreen,
+      page: () => const PaymentSuccessScreen(), // ✅ added success screen
     ),
   ];
 }
