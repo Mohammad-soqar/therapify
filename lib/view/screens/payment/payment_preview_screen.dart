@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/appbar.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:therapify/viewmodels/appointment_viewmodel.dart';
 
 class PaymentPreviewScreen extends StatefulWidget {
   const PaymentPreviewScreen({super.key});
@@ -19,6 +21,8 @@ class PaymentPreviewScreen extends StatefulWidget {
 class _PaymentPreviewScreenState extends State<PaymentPreviewScreen> {
   @override
   Widget build(BuildContext context) {
+        final vm = Provider.of<AppointmentViewmodel>(context);
+
     return Scaffold(
       appBar: const CustomAppbar(
         title: "Payment Details",
@@ -155,6 +159,7 @@ class _PaymentPreviewScreenState extends State<PaymentPreviewScreen> {
             AppButton(
               title: "Payment Now",
               onPress: () {
+                vm.addAppointment(doctorId, patientId, appointmentDate, appointmentTime)
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

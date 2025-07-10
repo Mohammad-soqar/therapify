@@ -1,0 +1,2 @@
+C:/rmtshardware/therapify/android/app/.cxx/Debug/484t3a6h/x86_64/CMakeFiles/edit_cache.dir
+C:/rmtshardware/therapify/android/app/.cxx/Debug/484t3a6h/x86_64/CMakeFiles/rebuild_cache.dir

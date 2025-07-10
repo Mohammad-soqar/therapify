@@ -1,33 +1,38 @@
 class AppointmentModel {
+  final String? appointmentId;
+
   final String patientId;
   final String doctorId;
   final String appointmentDate;
   final String appointmentTime;
-  final DateTime timestamp;
+  final DateTime createdTime;
 
   AppointmentModel({
+    this.appointmentId,
     required this.patientId,
     required this.doctorId,
     required this.appointmentDate,
     required this.appointmentTime,
-    required this.timestamp,
+    required this.createdTime,
   });
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
     return AppointmentModel(
+      appointmentId: json['appointmentId'],
       patientId: json['patientId'],
       doctorId: json['doctorId'],
       appointmentDate: json['appointmentDate'],
       appointmentTime: json['appointmentTime'],
-      timestamp: DateTime.parse(json['timestamp']),
+      createdTime: DateTime.parse(json['createdTime']),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'patientId': patientId,
-    'doctorId': doctorId,
-    'appointmentDate': appointmentDate,
-    'appointmentTime': appointmentTime,
-    'timestamp': timestamp.toIso8601String(),
-  };
+        'appointmentId': appointmentId,
+        'patientId': patientId,
+        'doctorId': doctorId,
+        'appointmentDate': appointmentDate,
+        'appointmentTime': appointmentTime,
+        'createdTime': createdTime.toIso8601String(),
+      };
 }
