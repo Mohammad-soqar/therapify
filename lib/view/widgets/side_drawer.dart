@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/view/screens/appointment/appointment_list_screen.dart';
 import 'package:therapify/view/screens/profile/edit_profile_screen.dart';
@@ -10,8 +12,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class SideDrawer extends StatelessWidget {
+class SideDrawer extends StatefulWidget {
   const SideDrawer({super.key});
+
+  @override
+  State<SideDrawer> createState() => _SideDrawerState();
+}
+
+class _SideDrawerState extends State<SideDrawer> {
+  String _name = 'Loading...';
+  String _email = '';
+  String? _imageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      if (doc.exists) {
+        final data = doc.data();
+        setState(() {
+          _name = data?['name'] ?? 'User';
+          _email = data?['email'] ?? '';
+          _imageUrl = data?['imageUrl']; // Optional: null if not uploaded
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +55,9 @@ class SideDrawer extends StatelessWidget {
           child: Container(
             width: 220.w,
             height: double.infinity,
-            decoration: BoxDecoration(color: AppColors.getContainerColor().withAlpha((.05 * 255).toInt())),
+            decoration: BoxDecoration(
+              color: AppColors.getContainerColor().withAlpha((.05 * 255).toInt()),
+            ),
             child: Stack(
               children: [
                 Positioned(
@@ -35,11 +69,12 @@ class SideDrawer extends StatelessWidget {
                     height: double.infinity,
                     width: 100.w,
                     child: Image.asset(
-                        Get.find<AppController>().isRtl()
-                            ? "assets/images/sidebar_shape_2.png"
-                            : "assets/images/sidebar_shape.png",
-                        color: AppColors.primaryColor,
-                        width: 100.w),
+                      Get.find<AppController>().isRtl()
+                          ? "assets/images/sidebar_shape_2.png"
+                          : "assets/images/sidebar_shape.png",
+                      color: AppColors.primaryColor,
+                      width: 100.w,
+                    ),
                   ),
                 ),
                 Column(
@@ -55,9 +90,7 @@ class SideDrawer extends StatelessWidget {
                         itemBuilder: (context, index) {
                           var item = sidebarItems[index];
                           return ListTile(
-                            onTap: () {
-                              Get.toNamed(item["route"]);
-                            },
+                            onTap: () => item["onTap"](context),
                             leading: Image.asset(
                               item['image'],
                               width: 24.w,
@@ -77,16 +110,16 @@ class SideDrawer extends StatelessWidget {
                       onTap: () {
                         showDialog(
                           context: context,
-                          builder: (context) {
-                            return const LogoutDialog();
-                          },
+                          builder: (context) => const LogoutDialog(),
                         );
                       },
                       child: Container(
                         margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                        decoration:
-                            BoxDecoration(color: AppColors.whiteColor, borderRadius: BorderRadius.circular(50.r)),
+                        decoration: BoxDecoration(
+                          color: AppColors.whiteColor,
+                          borderRadius: BorderRadius.circular(50.r),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -101,7 +134,7 @@ class SideDrawer extends StatelessWidget {
                         ),
                       ),
                     ),
-                    VSpace(20.h)
+                    VSpace(20.h),
                   ],
                 ),
               ],
@@ -119,16 +152,18 @@ class SideDrawer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "John J. Grubbs",
-                      style:
-                          Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 20.sp, color: AppColors.whiteColor),
+                      _name,
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: 20.sp,
+                            color: AppColors.whiteColor,
+                          ),
                     ),
                     Text(
-                      "grbross@gmail.com",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(fontSize: 15.sp, color: AppColors.whiteColor),
+                      _email,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            fontSize: 15.sp,
+                            color: AppColors.whiteColor,
+                          ),
                     ),
                   ],
                 ),
@@ -147,10 +182,9 @@ class SideDrawer extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(60.r),
-                      child: Image.asset(
-                        "assets/images/user.png",
-                        width: 60.r,
-                      ),
+                      child: _imageUrl != null
+                          ? Image.network(_imageUrl!, width: 60.r, height: 60.r, fit: BoxFit.cover)
+                          : Image.asset("assets/images/user.png", width: 60.r, height: 60.r),
                     ),
                   ),
                 ),
@@ -162,12 +196,13 @@ class SideDrawer extends StatelessWidget {
     );
   }
 }
+
 final List<Map<String, dynamic>> sidebarItems = [
   {
     "image": "assets/icons/person.png",
     "title": "Profile",
     "onTap": (BuildContext context) {
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const EditProfileScreen()),
       );
@@ -177,7 +212,7 @@ final List<Map<String, dynamic>> sidebarItems = [
     "image": "assets/icons/calendar.png",
     "title": "Appointments",
     "onTap": (BuildContext context) {
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const AppointmentListScreen()),
       );
@@ -187,7 +222,7 @@ final List<Map<String, dynamic>> sidebarItems = [
     "image": "assets/icons/fund_history.png",
     "title": "Transaction History",
     "onTap": (BuildContext context) {
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const TransactionScreen()),
       );
@@ -197,7 +232,7 @@ final List<Map<String, dynamic>> sidebarItems = [
     "image": "assets/icons/heart.png",
     "title": "Wishlist",
     "onTap": (BuildContext context) {
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const WishlistScreen()),
       );

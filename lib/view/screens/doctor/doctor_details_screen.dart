@@ -51,10 +51,10 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen>
               child: AppButton(
                 title: "Book Appointment",
                 onPress: () {
-                  Navigator.pushReplacement(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const AppointmentBookingScreen(),
+                      builder: (_) => AppointmentBookingScreen(doctor: item),
                     ),
                   );
                 },
@@ -63,6 +63,7 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen>
                 textColor: AppColors.getTitleColor(),
               ),
             ),
+
             HSpace(10.h),
 
             // See Doctor Now (WhatsApp) Button
@@ -220,7 +221,7 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen>
               ],
             ),
             VSpace(20.h),
-                        Row(
+            Row(
               children: [
                 RichText(
                   text: TextSpan(
@@ -230,7 +231,8 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen>
                 ),
                 RichText(
                   text: TextSpan(
-                    text: "\$${item.consultationFee.toStringAsFixed(2)} (Inc. VAT)",
+                    text:
+                        "\$${item.consultationFee.toStringAsFixed(2)} (Inc. VAT)",
                     style: Theme.of(context)
                         .textTheme
                         .titleMedium!
@@ -251,7 +253,6 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen>
               ],
             ),
             VSpace(20.h),
-
             Container(
               height: 56.h,
               padding: EdgeInsets.symmetric(horizontal: 6.w),
@@ -296,7 +297,6 @@ class _DoctorDetailsScreen extends State<DoctorDetailsScreen>
               ),
             ),
             VSpace(20.h),
-
             _tabs[_selectedIndex],
           ],
         ),

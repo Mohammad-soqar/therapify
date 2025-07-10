@@ -24,51 +24,62 @@ class _BottomNavbarState extends State<BottomNavbar> {
   ThemeService themeService = Get.put(ThemeService());
   int _currentIndex = 0;
 
-final List<Widget> _pages = [
-  const HomeScreen(),
-  ChangeNotifierProvider(
-    create: (_) => DoctorListViewModel(),
-    child: const DoctorListScreen(),
-  ),
-  const WishlistScreen(),
-  const ProfileScreen(),
-];
+  final List<Widget> _pages = [
+    const HomeScreen(), // 0
+    ChangeNotifierProvider(
+      create: (_) => DoctorListViewModel(),
+      child: const DoctorListScreen(showBackButton: false),
+    ),
+    const WishlistScreen(), // 2 (actually index 3 on screen)
+    const ProfileScreen(), // 3
+  ];
 
   final List<String> _icons = [
-    "assets/icons/home.png",
-    "assets/icons/doctor_bag.png",
-    "assets/icons/pie.png",
-    "assets/icons/heart.png",
-    "assets/icons/user.png",
+    "assets/icons/home.png", // index 0
+    "assets/icons/doctor_bag.png", // index 1
+    "", // index 2 (FAB placeholder)
+    "assets/icons/heart.png", // index 3 (Wishlist)
+    "assets/icons/user.png", // index 4 (Profile)
   ];
+
+  void _onNavTap(int visualIndex) {
+    if (visualIndex == 2) return; // FAB → ignore in navbar
+    setState(() {
+      _currentIndex = visualIndex > 2 ? visualIndex - 1 : visualIndex;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ThemeService>(builder: (themeService) {
       return Scaffold(
         body: _pages[_currentIndex],
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.miniCenterDocked,
         floatingActionButton: Padding(
           padding: EdgeInsets.only(top: 30.h),
           child: FloatingActionButton.small(
             onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const AppointmentListScreen(),
-                        ),
-                      );
-                    },
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const AppointmentListScreen(),
+                ),
+              );
+            },
             backgroundColor: AppColors.primaryColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.r),
             ),
-            child: Icon(Ionicons.calendar_outline, size: 18.sp, color: AppColors.whiteColor),
+            child: Icon(Ionicons.calendar_outline,
+                size: 18.sp, color: AppColors.whiteColor),
           ),
         ),
         bottomNavigationBar: Theme(
           data: Theme.of(context).copyWith(
-              textTheme: Theme.of(context).textTheme.copyWith(bodySmall: const TextStyle(color: Colors.yellow))),
+              textTheme: Theme.of(context)
+                  .textTheme
+                  .copyWith(bodySmall: const TextStyle(color: Colors.yellow))),
           child: ClipPath(
             clipper: CurveClipper(),
             child: Container(
@@ -80,15 +91,19 @@ final List<Widget> _pages = [
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: List.generate(_icons.length, (index) {
+                  // Skip FAB slot at index 2
+                  if (index == 2) {
+                    return SizedBox(width: 0); // Reserve space for FAB
+                  }
+
                   double itemWidth = 45.w;
+                  bool isSelected =
+                      _currentIndex == (index > 2 ? index - 1 : index);
+
                   return InkWell(
-                    onTap: () {
-                      setState(() {
-                        _currentIndex = index;
-                      });
-                    },
+                    onTap: () => _onNavTap(index),
                     child: Container(
-                      width: index != 2 ? itemWidth : 0,
+                      width: itemWidth,
                       margin: EdgeInsets.symmetric(horizontal: 5.w),
                       child: Center(
                         child: Container(
@@ -98,7 +113,9 @@ final List<Widget> _pages = [
                           ),
                           child: Image.asset(
                             _icons[index],
-                            color: _currentIndex == index ? AppColors.primaryColor : AppColors.getTitleColor(),
+                            color: isSelected
+                                ? AppColors.primaryColor
+                                : AppColors.getTitleColor(),
                             width: 18.r,
                             height: 18.r,
                           ),

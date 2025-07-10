@@ -83,12 +83,8 @@ class DoctorInfoTab extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 15.sp),
                     ),
                     VSpace(20.h),
-                    Text("Doctor Code", style: Theme.of(context).textTheme.bodySmall),
-                    VSpace(8.h),
-                    Text(
-                      item.doctorId,
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 15.sp),
-                    ),
+                    
+                    
                   ],
                 ),
               ),

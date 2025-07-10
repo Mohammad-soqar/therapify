@@ -14,7 +14,8 @@ class WishlistScreen extends StatefulWidget {
 }
 
 class _WishlistScreenState extends State<WishlistScreen> {
-  final List<DoctorModel> _wishlistDoctors = []; // TODO: Replace with Firestore or local DB
+  final List<DoctorModel> _wishlistDoctors =
+      []; // TODO: Replace with Firestore or local DB
 
   void _removeItem(int index) {
     setState(() {
@@ -27,7 +28,6 @@ class _WishlistScreenState extends State<WishlistScreen> {
     return Scaffold(
       appBar: const CustomAppbar(
         title: "Wishlist",
-        leading: [GetBackButton()],
       ),
       body: _wishlistDoctors.isNotEmpty
           ? SingleChildScrollView(
@@ -46,22 +46,24 @@ class _WishlistScreenState extends State<WishlistScreen> {
                 },
               ),
             )
-          : Container(
-              padding: EdgeInsets.all(20.r),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset("assets/images/no_appointment.png", width: 180.w),
-                        VSpace(20.h),
-                        Text("No Doctor Found!", style: Theme.of(context).textTheme.titleMedium),
-                        VSpace(50.h),
-                      ],
+          : Center(
+              child: Padding(
+                padding: EdgeInsets.all(20.r),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset("assets/images/no_appointment.png",
+                        width: 180.w),
+                    VSpace(20.h),
+                    Text(
+                      "No Doctor Found!",
+                      style: Theme.of(context).textTheme.titleMedium,
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-                ],
+                    VSpace(50.h),
+                  ],
+                ),
               ),
             ),
     );

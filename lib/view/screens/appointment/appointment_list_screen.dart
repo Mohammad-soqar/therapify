@@ -151,7 +151,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen>
             AppButton(
               width: double.infinity,
               title: "Book Appointment Now",
-              onPress: () {Navigator.pushReplacement(
+              onPress: () {Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => ChangeNotifierProvider(
   create: (_) => DoctorListViewModel(),

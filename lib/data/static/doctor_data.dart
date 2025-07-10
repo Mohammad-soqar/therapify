@@ -13,6 +13,12 @@ List<DoctorModel> doctorData = [
     availabilityTime: '10:00 AM - 2:00 PM',
     location: 'Cairo, Egypt',
     imageUrl: null,
+    bio: 'Experienced psychiatrist with a focus on cognitive behavioral therapy.',
+    workingIn: 'Cairo Mental Health Center',
+    workplace: 'Cairo Mental Health Center',
+    category: 'Psychiatry',
+    rating: 4.5,
+    isAvailable: true,
     specialization: 'Psychiatrist',
     schedule: [
       ScheduleModel(

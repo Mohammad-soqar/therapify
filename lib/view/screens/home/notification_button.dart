@@ -13,7 +13,7 @@ class NotificationButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => const NotificationScreen(),

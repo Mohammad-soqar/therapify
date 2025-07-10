@@ -12,7 +12,10 @@ import 'package:therapify/view/widgets/spacing.dart';
 import 'package:therapify/viewmodels/doctor_list_viewmodel.dart';
 
 class DoctorListScreen extends StatefulWidget {
-  const DoctorListScreen({super.key});
+  final bool showBackButton; // <-- NEW
+
+  const DoctorListScreen(
+      {super.key, this.showBackButton = true}); // <-- default to true
 
   @override
   State<DoctorListScreen> createState() => _DoctorListScreenState();
@@ -45,9 +48,9 @@ class _DoctorListScreenState extends State<DoctorListScreen>
     final doctorViewModel = Provider.of<DoctorListViewModel>(context);
 
     return Scaffold(
-      appBar: const CustomAppbar(
+      appBar: CustomAppbar(
         title: "Specialists",
-        leading: [GetBackButton()],
+        leading: widget.showBackButton ? [GetBackButton()] : [],
       ),
       body: Column(
         children: [
@@ -64,7 +67,8 @@ class _DoctorListScreenState extends State<DoctorListScreen>
                       context: context,
                       hintText: 'Search',
                       fillColor: AppColors.getContainerColor(),
-                      borderColor: AppColors.primaryColor.withAlpha((0.2 * 255).toInt()),
+                      borderColor:
+                          AppColors.primaryColor.withAlpha((0.2 * 255).toInt()),
                       prefixIcon: Image.asset(
                         "assets/icons/search.png",
                         color: AppColors.getTextColor(),

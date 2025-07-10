@@ -1,21 +1,24 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:therapify/data/models/DoctorModel.dart';
 import 'package:therapify/res/colors/app_colors.dart';
-import 'package:therapify/view/screens/payment/payment_screen.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/appbar.dart';
 import 'package:therapify/view/widgets/back_button.dart';
+import 'package:therapify/view/widgets/bottom_sheet.dart';
 import 'package:therapify/view/widgets/input_decoration.dart';
-import 'package:therapify/view/widgets/dropdown_button.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 import 'package:therapify/viewmodels/controllers/app_controller.dart';
 import 'package:therapify/viewmodels/controllers/ticket_controller.dart';
 
 class AppointmentBookingScreen extends StatefulWidget {
-  const AppointmentBookingScreen({super.key});
+  final DoctorModel doctor;
+
+  const AppointmentBookingScreen({super.key, required this.doctor});
 
   @override
   State<AppointmentBookingScreen> createState() =>
@@ -27,23 +30,18 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
       Get.put(AppointmentController());
   final AppController appController = Get.find<AppController>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _weightController = TextEditingController();
-  final TextEditingController _ageController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
-
-  String? _selectedGender;
-  final List<String> _genders = ['Male', "Female"];
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   late DoctorModel doctor;
   dynamic _selectedDate;
   dynamic _selectedTimeSlot;
+  String? patientId;
 
   @override
   void initState() {
     super.initState();
-    doctor = Get.arguments as DoctorModel;
+    doctor = widget.doctor;
 
     if (doctor.schedule.isNotEmpty) {
       _selectedDate = doctor.schedule[0];
@@ -51,6 +49,8 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
         _selectedTimeSlot = _selectedDate.timeSlots[0];
       }
     }
+    patientId = _auth.currentUser?.uid;
+
   }
 
   @override
@@ -68,7 +68,6 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Date Picker
                 Text("Date", style: Theme.of(context).textTheme.titleMedium),
                 VSpace(8.h),
                 SizedBox(
@@ -115,10 +114,11 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
                                     .textTheme
                                     .bodyMedium!
                                     .copyWith(
-                                        fontSize: 14.sp,
-                                        color: _selectedDate == item
-                                            ? AppColors.whiteColor
-                                            : AppColors.getTextColor()),
+                                      fontSize: 14.sp,
+                                      color: _selectedDate == item
+                                          ? AppColors.whiteColor
+                                          : AppColors.getTextColor(),
+                                    ),
                               ),
                             ],
                           ),
@@ -127,8 +127,6 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
                     },
                   ),
                 ),
-
-                // Time Picker
                 VSpace(20.h),
                 Text("Time", style: Theme.of(context).textTheme.titleMedium),
                 VSpace(8.h),
@@ -174,68 +172,6 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
                         )
                       : Center(child: Text("No available time slots")),
                 ),
-
-                // Patient Info Form
-                VSpace(20.h),
-                TextFormField(
-                  controller: _nameController,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Please enter name' : null,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  decoration: AppInputDecoration.roundInputDecoration(
-                    context: context,
-                    hintText: 'Patient Name',
-                    borderColor: AppColors.getContainerColor(),
-                    fillColor: AppColors.getContainerColor(),
-                    prefixIcon: Image.asset("assets/icons/user.png",
-                        color: AppColors.getTextColor()),
-                  ),
-                ),
-
-                VSpace(20.h),
-                SearchableDropdown(
-                  dropdownItems: _genders,
-                  selectedItem: _selectedGender,
-                  hintText: "Gender",
-                  prefixIcon: Image.asset("assets/icons/gender.png",
-                      color: AppColors.getTextColor()),
-                  onChanged: (String? value) {
-                    _selectedGender = value;
-                  },
-                ),
-
-                VSpace(20.h),
-                TextFormField(
-                  controller: _ageController,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Please enter age' : null,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  decoration: AppInputDecoration.roundInputDecoration(
-                    context: context,
-                    hintText: 'Age',
-                    borderColor: AppColors.getContainerColor(),
-                    fillColor: AppColors.getContainerColor(),
-                    prefixIcon: Image.asset("assets/icons/calendar.png",
-                        color: AppColors.getTextColor()),
-                  ),
-                ),
-
-                VSpace(20.h),
-                TextFormField(
-                  controller: _weightController,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Please enter weight' : null,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  decoration: AppInputDecoration.roundInputDecoration(
-                    context: context,
-                    hintText: 'Weight (kg)',
-                    borderColor: AppColors.getContainerColor(),
-                    fillColor: AppColors.getContainerColor(),
-                    prefixIcon: Image.asset("assets/icons/weight_scale.png",
-                        color: AppColors.getTextColor()),
-                  ),
-                ),
-
                 VSpace(20.h),
                 TextFormField(
                   controller: _messageController,
@@ -250,7 +186,6 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
                     fillColor: AppColors.getContainerColor(),
                   ),
                 ),
-
                 VSpace(25.h),
                 Center(
                   child: AppButton(
@@ -260,10 +195,13 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
                     bgColor: AppColors.primaryColor,
                     onPress: () {
                       if (_formKey.currentState!.validate()) {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const PaymentScreen()));
+                        showCustomModalBottomSheet(
+                          context,
+                          doctor: doctor,
+                          selectedDate: _selectedDate.date,
+                          selectedTime: _selectedTimeSlot,
+                          patientId: patientId!, // ✅ added this
+                        );
                       }
                     },
                   ),

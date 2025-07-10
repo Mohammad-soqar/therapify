@@ -5,15 +5,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
-
 import 'package:therapify/res/localization/languages.dart';
 import 'package:therapify/res/routes/routes.dart';
 import 'package:therapify/res/themes/theme.dart';
 import 'package:therapify/res/themes/theme_service.dart';
 import 'package:therapify/view/screens/auth/signin_screen.dart';
 import 'package:therapify/view/screens/home/home_screen.dart';
+import 'package:therapify/view/widgets/bottom_nav.dart';
 import 'package:therapify/viewmodels/controllers/app_controller.dart';
 import 'package:therapify/viewmodels/doctor_list_viewmodel.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -78,7 +79,7 @@ class AuthWrapper extends StatelessWidget {
           if (snapshot.hasData) {
             return ChangeNotifierProvider(
               create: (_) => DoctorListViewModel(),
-              child: const HomeScreen(),
+              child: const BottomNavbar(),
             );
           }
           return const SignInScreen();
