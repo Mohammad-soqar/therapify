@@ -33,7 +33,10 @@ class _SideDrawerState extends State<SideDrawer> {
   Future<void> _fetchUserData() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
       if (doc.exists) {
         final data = doc.data();
         setState(() {
@@ -56,7 +59,8 @@ class _SideDrawerState extends State<SideDrawer> {
             width: 220.w,
             height: double.infinity,
             decoration: BoxDecoration(
-              color: AppColors.getContainerColor().withAlpha((.05 * 255).toInt()),
+              color:
+                  AppColors.getContainerColor().withAlpha((.05 * 255).toInt()),
             ),
             child: Stack(
               children: [
@@ -86,9 +90,12 @@ class _SideDrawerState extends State<SideDrawer> {
                       child: ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: sidebarItems.length,
+                        itemCount: getSidebarItems(
+                                FirebaseAuth.instance.currentUser!.uid)
+                            .length,
                         itemBuilder: (context, index) {
-                          var item = sidebarItems[index];
+                          var item = getSidebarItems(
+                              FirebaseAuth.instance.currentUser!.uid)[index];
                           return ListTile(
                             onTap: () => item["onTap"](context),
                             leading: Image.asset(
@@ -98,7 +105,10 @@ class _SideDrawerState extends State<SideDrawer> {
                             ),
                             title: Text(
                               item['title'],
-                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
                                     color: AppColors.whiteColor,
                                   ),
                             ),
@@ -114,8 +124,10 @@ class _SideDrawerState extends State<SideDrawer> {
                         );
                       },
                       child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 20.w, vertical: 10.h),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20.w, vertical: 10.h),
                         decoration: BoxDecoration(
                           color: AppColors.whiteColor,
                           borderRadius: BorderRadius.circular(50.r),
@@ -128,7 +140,10 @@ class _SideDrawerState extends State<SideDrawer> {
                             const HSpace(10),
                             Text(
                               "Log Out",
-                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.dangerColor),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(color: AppColors.dangerColor),
                             ),
                           ],
                         ),
@@ -177,14 +192,17 @@ class _SideDrawerState extends State<SideDrawer> {
                   child: Container(
                     padding: EdgeInsets.all(15.r),
                     decoration: BoxDecoration(
-                      color: AppColors.getContainerColor().withAlpha((.05 * 255).toInt()),
+                      color: AppColors.getContainerColor()
+                          .withAlpha((.05 * 255).toInt()),
                       borderRadius: BorderRadius.circular(100.r),
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(60.r),
                       child: _imageUrl != null
-                          ? Image.network(_imageUrl!, width: 60.r, height: 60.r, fit: BoxFit.cover)
-                          : Image.asset("assets/images/user.png", width: 60.r, height: 60.r),
+                          ? Image.network(_imageUrl!,
+                              width: 60.r, height: 60.r, fit: BoxFit.cover)
+                          : Image.asset("assets/images/user.png",
+                              width: 60.r, height: 60.r),
                     ),
                   ),
                 ),
@@ -197,45 +215,49 @@ class _SideDrawerState extends State<SideDrawer> {
   }
 }
 
-final List<Map<String, dynamic>> sidebarItems = [
-  {
-    "image": "assets/icons/person.png",
-    "title": "Profile",
-    "onTap": (BuildContext context) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-      );
+List<Map<String, dynamic>> getSidebarItems(String uid) {
+  return [
+    {
+      "image": "assets/icons/person.png",
+      "title": "Profile",
+      "onTap": (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+        );
+      },
     },
-  },
-  {
-    "image": "assets/icons/calendar.png",
-    "title": "Appointments",
-    "onTap": (BuildContext context) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const AppointmentListScreen()),
-      );
+    {
+      "image": "assets/icons/calendar.png",
+      "title": "Appointments",
+      "onTap": (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => AppointmentListScreen(patientId: uid),
+          ),
+        );
+      },
     },
-  },
-  {
-    "image": "assets/icons/fund_history.png",
-    "title": "Transaction History",
-    "onTap": (BuildContext context) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const TransactionScreen()),
-      );
+    {
+      "image": "assets/icons/fund_history.png",
+      "title": "Transaction History",
+      "onTap": (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const TransactionScreen()),
+        );
+      },
     },
-  },
-  {
-    "image": "assets/icons/heart.png",
-    "title": "Wishlist",
-    "onTap": (BuildContext context) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const WishlistScreen()),
-      );
+    {
+      "image": "assets/icons/heart.png",
+      "title": "Wishlist",
+      "onTap": (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const WishlistScreen()),
+        );
+      },
     },
-  },
-];
+  ];
+}

@@ -22,6 +22,8 @@ class AppointmentViewmodel extends ChangeNotifier {
     try {
       final appointment = AppointmentModel(
         doctorId: doctorId,
+        doctorName: '', // This can be set later if needed
+        patientName: '', // This can be set later if needed
         patientId: patientId,
         appointmentTime: appointmentTime,
         appointmentDate: appointmentDate,
@@ -33,6 +35,38 @@ class AppointmentViewmodel extends ChangeNotifier {
       errorMessage = null;
     } catch (e) {
       errorMessage = 'Error adding appointment: $e';
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<AppointmentModel> getAppointment(String id) async {
+    isLoading = true;
+    notifyListeners();
+    try {
+      final appointment = await _appointmentService.getAppointment(id);
+      errorMessage = null;
+      return appointment;
+    } catch (e) {
+      errorMessage = 'Error fetching appointment: $e';
+      rethrow;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<List<AppointmentModel>> getAllAppointments(String patientId) async {
+    isLoading = true;
+    notifyListeners();
+    try {
+      final appointments = await _appointmentService.getAllAppointments(patientId);
+      errorMessage = null;
+      return appointments;
+    } catch (e) {
+      errorMessage = 'Error fetching appointments: $e';
+      rethrow;
     } finally {
       isLoading = false;
       notifyListeners();

@@ -55,7 +55,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       doctor: widget.doctor,
                       selectedDate: widget.selectedDate,
                       selectedTime: widget.selectedTime,
-                      patientName: widget.patientName, // ✅ passed properly now
+                      patientId: widget.patientName, // ✅ passed properly now
                     );
                   },
                   child: Container(
