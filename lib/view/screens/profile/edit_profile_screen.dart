@@ -1,12 +1,11 @@
-import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_code_picker/country_code_picker.dart';
-import 'package:therapify/view/widgets/dropdown_button.dart';
-import 'package:therapify/viewmodels/controllers/app_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
+
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/utils/utils.dart';
 import 'package:therapify/view/widgets/app_button.dart';
@@ -14,6 +13,7 @@ import 'package:therapify/view/widgets/appbar.dart';
 import 'package:therapify/view/widgets/back_button.dart';
 import 'package:therapify/view/widgets/input_decoration.dart';
 import 'package:therapify/view/widgets/spacing.dart';
+import 'package:therapify/viewmodels/controllers/app_controller.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -25,34 +25,35 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final AppController appController = Get.find<AppController>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
+
+  final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
-  final TextEditingController _countryController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
-  String initialCountry = 'RU';
-  String phoneCode = '+7';
-  final List<dynamic> _languages = [
-    {"name": 'English', "rtl": false},
-    {"name": 'Spanish', "rtl": true},
-    {"name": "Arabic", "rtl": true},
-  ];
-  final List<String> _bloodGroups = ['A', "A+", "A-", "B", "B+", "B-", 'O', 'O+', 'O-', 'AB', 'AB+', 'AB-'];
-  final List<String> _genders = ['Male', "Female"];
-  String? _selectedLanguage;
-  String? _selectedGender;
-  String? _selectedBloodGroup;
 
-  File? _pickedUserImage;
-  Future<void> _pickImage() async {
-    final imagePicker = ImagePicker();
-    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _pickedUserImage = File(pickedFile.path);
-      });
+  String initialCountry = 'TR';
+  String phoneCode = '+90';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      if (doc.exists) {
+        final data = doc.data();
+        if (data != null) {
+          _fullNameController.text = data['name'] ?? '';
+          _emailController.text = data['email'] ?? '';
+          _phoneNumberController.text = data['phoneNumber'] ?? '';
+        }
+      }
     }
   }
 
@@ -70,75 +71,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10.r),
-                    child: _pickedUserImage == null
-                        ? Image.asset(
-                            "assets/images/user.png",
-                            width: 100.r,
-                            height: 100.r,
-                            fit: BoxFit.cover,
-                          )
-                        : Image.file(
-                            _pickedUserImage!,
-                            width: 100.r,
-                            height: 100.r,
-                            fit: BoxFit.cover,
-                          ),
-                  ),
-                  HSpace(20.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Adam Levine",
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      VSpace(10.h),
-                      Text("hellojohnjgrubs@gmail.com", style: Theme.of(context).textTheme.bodySmall),
-                      VSpace(10.h),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                        decoration:
-                            BoxDecoration(color: AppColors.primaryColor, borderRadius: BorderRadius.circular(35.w)),
-                        child: InkWell(
-                          onTap: _pickImage,
-                          child: Row(
-                            children: [
-                              Icon(
-                                Ionicons.image_sharp,
-                                color: AppColors.whiteColor,
-                                size: 16.sp,
-                              ),
-                              HSpace(5.w),
-                              Text(
-                                "Upload Image",
-                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.whiteColor),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
               VSpace(20.h),
               Container(
                 width: double.infinity,
                 height: 40.h,
                 decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: const AssetImage('assets/icons/heading_line.png'),
-                        colorFilter: ColorFilter.mode(
-                          AppColors.primaryColor,
-                          BlendMode.srcATop,
-                        ),
-                        fit: BoxFit.contain)),
+                  image: DecorationImage(
+                    image: const AssetImage('assets/icons/heading_line.png'),
+                    colorFilter: ColorFilter.mode(
+                      AppColors.primaryColor,
+                      BlendMode.srcATop,
+                    ),
+                    fit: BoxFit.contain,
+                  ),
+                ),
                 child: Padding(
                   padding: EdgeInsets.only(top: 4.h),
                   child: Text(
@@ -149,60 +95,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
               SizedBox(height: 10.h),
+
+              // Full Name
               TextFormField(
-                controller: _firstNameController,
+                controller: _fullNameController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter first name';
+                    return 'Please enter Full name';
                   }
                   return null;
                 },
                 style: Theme.of(context).textTheme.bodyMedium,
                 decoration: AppInputDecoration.roundInputDecoration(
                   context: context,
-                  hintText: 'First Name',
+                  hintText: 'Full Name',
                   fillColor: AppColors.getContainerColor(),
                   borderColor: AppColors.getContainerColor(),
-                  prefixIcon: Image.asset("assets/icons/person.png", color: AppColors.getTextColor()),
+                  prefixIcon: Image.asset("assets/icons/person.png",
+                      color: AppColors.getTextColor()),
                 ),
               ),
               SizedBox(height: 20.h),
-              TextFormField(
-                controller: _lastNameController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter first name';
-                  }
-                  return null;
-                },
-                style: Theme.of(context).textTheme.bodyMedium,
-                decoration: AppInputDecoration.roundInputDecoration(
-                  context: context,
-                  hintText: 'Last Name',
-                  fillColor: AppColors.getContainerColor(),
-                  borderColor: AppColors.getContainerColor(),
-                  prefixIcon: Image.asset("assets/icons/person.png", color: AppColors.getTextColor()),
-                ),
-              ),
-              SizedBox(height: 20.h),
-              TextFormField(
-                controller: _usernameController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter username';
-                  }
-                  return null;
-                },
-                style: Theme.of(context).textTheme.bodyMedium,
-                decoration: AppInputDecoration.roundInputDecoration(
-                  context: context,
-                  hintText: 'Username',
-                  fillColor: AppColors.getContainerColor(),
-                  borderColor: AppColors.getContainerColor(),
-                  prefixIcon: Image.asset("assets/icons/at.png", color: AppColors.getTextColor()),
-                ),
-              ),
-              SizedBox(height: 20.h),
+
+              // Email Address
               TextFormField(
                 controller: _emailController,
                 validator: (value) {
@@ -212,7 +127,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   bool isValidEmail = RegExp(
                     r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$',
                   ).hasMatch(value);
-
                   if (!isValidEmail) {
                     return 'Please enter a valid email address';
                   }
@@ -224,65 +138,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   hintText: 'Email Address',
                   fillColor: AppColors.getContainerColor(),
                   borderColor: AppColors.getContainerColor(),
-                  prefixIcon: Image.asset("assets/icons/mail.png", color: AppColors.getTextColor()),
+                  prefixIcon: Image.asset("assets/icons/mail.png",
+                      color: AppColors.getTextColor()),
                 ),
               ),
               SizedBox(height: 20.h),
+
+              // Phone Number
               Row(
-                children: [
-                  Expanded(
-                    child: SearchableDropdown(
-                      dropdownItems: _genders.asMap().map((index, gender) => MapEntry(index, gender)).values.toList(),
-                      selectedItem: _selectedGender,
-                      prefixIcon: Image.asset("assets/icons/gender.png", color: AppColors.getTextColor()),
-                      hintText: "Gender",
-                      onChanged: (String? value) {
-                        if (value != null) {
-                          _selectedGender = value;
-                        }
-                      },
-                    ),
-                  ),
-                  HSpace(10.w),
-                  Expanded(
-                    child: SearchableDropdown(
-                      dropdownItems:
-                          _bloodGroups.asMap().map((index, gender) => MapEntry(index, gender)).values.toList(),
-                      selectedItem: _selectedBloodGroup,
-                      prefixIcon: Image.asset("assets/icons/blood_drop.png", color: AppColors.getTextColor()),
-                      hintText: "Blood Group",
-                      onChanged: (String? value) {
-                        if (value != null) {
-                          _selectedBloodGroup = value;
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    decoration:
-                        BoxDecoration(color: AppColors.getContainerColor(), borderRadius: BorderRadius.circular(10.r)),
+                    decoration: BoxDecoration(
+                      color: AppColors.getContainerColor(),
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
                     width: 130.w,
                     height: 50.h,
-                    padding: EdgeInsets.zero,
                     child: CountryCodePicker(
-                      onChanged: (CountryCode countryCode) {
+                      onChanged: (countryCode) {
                         phoneCode = countryCode.dialCode.toString();
                         initialCountry = countryCode.code.toString();
-                        debugPrint("phoneCode $phoneCode");
-                        debugPrint("initialCountry $initialCountry");
                       },
-                      padding: EdgeInsets.symmetric(horizontal: 0, vertical: 7.h),
                       initialSelection: initialCountry,
-                      favorite: const ['+39', 'FR'],
-                      showCountryOnly: false,
-                      showOnlyCountryWhenClosed: false,
+                      favorite: const ['+90', 'TR'],
                       alignLeft: true,
                       boxDecoration: BoxDecoration(
                         color: AppColors.getContainerColor(),
@@ -292,7 +170,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       textStyle: Theme.of(context).textTheme.bodyMedium,
                       searchStyle: Theme.of(context).textTheme.bodyMedium,
                       dialogTextStyle: Theme.of(context).textTheme.bodyMedium,
-                      closeIcon: Icon(Ionicons.close_outline, size: 22.sp, color: AppColors.getTextColor()),
+                      closeIcon: Icon(Ionicons.close_outline,
+                          size: 22.sp, color: AppColors.getTextColor()),
                       searchDecoration: AppInputDecoration.roundInputDecoration(
                         context: context,
                         hintText: 'Search',
@@ -306,7 +185,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ),
                   const HSpace(10),
-                  Flexible(
+                  Expanded(
                     child: TextFormField(
                       controller: _phoneNumberController,
                       validator: (value) {
@@ -315,80 +194,69 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         }
                         return null;
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.phone,
                       style: Theme.of(context).textTheme.bodyMedium,
                       decoration: AppInputDecoration.roundInputDecoration(
                         context: context,
                         hintText: 'Phone',
                         fillColor: AppColors.getContainerColor(),
                         borderColor: AppColors.getContainerColor(),
-                        prefixIcon: Image.asset("assets/icons/phone.png", color: AppColors.getTextColor()),
+                        prefixIcon: Image.asset("assets/icons/phone.png",
+                            color: AppColors.getTextColor()),
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 20.h),
-              TextFormField(
-                controller: _countryController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter country';
-                  }
-                  return null;
-                },
-                style: Theme.of(context).textTheme.bodyMedium,
-                decoration: AppInputDecoration.roundInputDecoration(
-                  context: context,
-                  hintText: 'Country',
-                  fillColor: AppColors.getContainerColor(),
-                  borderColor: AppColors.getContainerColor(),
-                  prefixIcon: Image.asset("assets/icons/flag.png", color: AppColors.getTextColor()),
-                ),
-              ),
-              SizedBox(height: 20.h),
-              SearchableDropdown(
-                dropdownItems: _languages.map((language) => language['name']!).toList(),
-                selectedItem: _selectedLanguage,
-                prefixIcon: Image.asset("assets/icons/language.png", color: AppColors.getTextColor()),
-                hintText: "Select Language",
-                onChanged: (String? value) {
-                  if (value != null) {
-                    setState(() {
-                      _selectedLanguage = value;
-                      final selectedLanguage = _languages.firstWhere((language) => language['name'] == value);
-                      appController.setTextDirection(selectedLanguage['rtl'] as bool);
-                    });
-                  }
-                },
-              ),
-              SizedBox(height: 20.h),
-              TextFormField(
-                controller: _addressController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter address';
-                  }
-                  return null;
-                },
-                style: Theme.of(context).textTheme.bodyMedium,
-                decoration: AppInputDecoration.roundInputDecoration(
-                  context: context,
-                  hintText: 'Address',
-                  fillColor: AppColors.getContainerColor(),
-                  borderColor: AppColors.getContainerColor(),
-                ),
-                maxLines: 3,
-              ),
               SizedBox(height: 25.h),
+
+              // Save Button
               Center(
                 child: AppButton(
                   title: "Save Changes".tr,
                   height: 50.h,
                   width: double.infinity,
                   bgColor: AppColors.primaryColor,
-                  onPress: () {
-                    if (_formKey.currentState!.validate()) {}
+                  onPress: () async {
+                    if (_formKey.currentState!.validate()) {
+                      final user = FirebaseAuth.instance.currentUser;
+                      final newEmail = _emailController.text.trim();
+                      final newName = _fullNameController.text.trim();
+                      final newPhone = _phoneNumberController.text.trim();
+
+                      try {
+                        // Update Firebase Auth email if it changed
+                        if (user != null && user.email != newEmail) {
+                          await user.updateEmail(newEmail);
+                        }
+
+                        // Update Firestore
+                        await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(user!.uid)
+                            .update({
+                          'name': newName,
+                          'email': newEmail,
+                          'phoneNumber': newPhone,
+                        });
+
+                        Get.snackbar(
+                          'Profile Updated',
+                          'Your profile was successfully updated.',
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: AppColors.primaryColor,
+                          colorText: Colors.white,
+                        );
+                      } catch (e) {
+                        Get.snackbar(
+                          'Update Failed',
+                          e.toString(),
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.red,
+                          colorText: Colors.white,
+                        );
+                      }
+                    }
                   },
                 ),
               ),
