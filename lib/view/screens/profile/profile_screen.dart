@@ -206,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ListTile(
                   dense: true,
                   onTap: () {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => const EditProfileScreen(),
@@ -241,7 +241,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ListTile(
                   dense: true,
                   onTap: () =>  {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => const ChangePasswordScreen(),
@@ -276,7 +276,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ListTile(
                   dense: true,
                   onTap: ()  {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => const TwoFactorScreen(),
@@ -310,14 +310,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 listDivider(),
                 ListTile(
                   dense: true,
-                  onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const KycVerificationScreen(),
-                        ),
-                      );
-                    },
+                  
                   contentPadding: EdgeInsets.zero,
                   horizontalTitleGap: 15.w,
                   leading: Container(
@@ -332,76 +325,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       size: 18.sp,
                     ),
                   ),
-                  title: Text(
-                    "Kyc Verification",
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  trailing: Icon(
-                    appController.isRtl() ? Ionicons.chevron_back_outline : Ionicons.chevron_forward_outline,
-                    size: 16.sp,
-                    color: AppColors.getTextColor(),
-                  ),
-                ),
-                listDivider(),
-                ListTile(
-                  dense: true,
-                  onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const KycSubmissionScreen(),
-                        ),
-                      );
-                    },
-                  contentPadding: EdgeInsets.zero,
-                  horizontalTitleGap: 15.w,
-                  leading: Container(
-                    padding: EdgeInsets.all(8.r),
-                    decoration: BoxDecoration(
-                      color: AppColors.getBackgroundColor(),
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Icon(
-                      Ionicons.list_outline,
-                      color: AppColors.getTextColor(),
-                      size: 18.sp,
-                    ),
-                  ),
-                  title: Text(
-                    "Kyc Submission List",
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  trailing: Icon(
-                    appController.isRtl() ? Ionicons.chevron_back_outline : Ionicons.chevron_forward_outline,
-                    size: 16.sp,
-                    color: AppColors.getTextColor(),
-                  ),
-                ),
-                listDivider(),
-                ListTile(
-                  dense: true,
-                  onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const TicketScreen(),
-                        ),
-                      );
-                    },
-                  contentPadding: EdgeInsets.zero,
-                  horizontalTitleGap: 15.w,
-                  leading: Container(
-                    padding: EdgeInsets.all(8.r),
-                    decoration: BoxDecoration(
-                      color: AppColors.getBackgroundColor(),
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Icon(
-                      Ionicons.headset_outline,
-                      color: AppColors.getTextColor(),
-                      size: 18.sp,
-                    ),
-                  ),
+                  
+                  
+
                   title: Text(
                     "Support Ticket",
                     style: Theme.of(context).textTheme.bodyMedium,
@@ -412,6 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     color: AppColors.getTextColor(),
                   ),
                 ),
+                
                 listDivider(),
                 ListTile(
                   dense: true,
@@ -437,6 +364,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       size: 18.sp,
                     ),
                   ),
+                  
                   title: Text(
                     "Sign Out",
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.dangerColor),

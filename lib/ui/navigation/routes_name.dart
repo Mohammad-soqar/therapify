@@ -9,6 +9,8 @@ class RoutesName {
   static const String doctorDetailsScreen = '/doctorDetails';
   static const String appointmentBookingScreen = '/appointmentBooking';
   static const String callScreen = '/call';
+  static const String paymentPreviewScreen = '/paymentPreview';
+  static const String paymentSuccessScreen = '/paymentSuccess';
  
  
   // lib/res/routes/routes_name.dart

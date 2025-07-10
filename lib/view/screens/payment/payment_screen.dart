@@ -1,3 +1,4 @@
+import 'package:therapify/data/models/DoctorModel.dart';
 import 'package:therapify/view/widgets/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,7 +8,18 @@ import 'package:therapify/view/widgets/appbar.dart';
 import 'package:therapify/view/widgets/back_button.dart';
 
 class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({super.key});
+  final DoctorModel doctor;
+  final String selectedDate;
+  final String selectedTime;
+  final String patientName;
+
+  const PaymentScreen({
+    super.key,
+    required this.doctor,
+    required this.selectedDate,
+    required this.selectedTime,
+    required this.patientName,
+  });
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -38,7 +50,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   onTap: () {
                     selectedGateway = item;
                     setState(() {});
-                    showCustomModalBottomSheet(context);
+                    showCustomModalBottomSheet(
+                      context,
+                      doctor: widget.doctor,
+                      selectedDate: widget.selectedDate,
+                      selectedTime: widget.selectedTime,
+                      patientName: widget.patientName, // ✅ passed properly now
+                    );
                   },
                   child: Container(
                     margin: EdgeInsets.only(bottom: 15.h),
@@ -47,32 +65,37 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       color: AppColors.getContainerColor(),
                     ),
                     child: ListTile(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 15.r, vertical: 5.h),
-                        leading: SizedBox(
-                          width: 50.r,
-                          height: 50.r,
-                          child: Image.asset(item.image),
+                      contentPadding: EdgeInsets.symmetric(
+                          horizontal: 15.r, vertical: 5.h),
+                      leading: SizedBox(
+                        width: 50.r,
+                        height: 50.r,
+                        child: Image.asset(item.image),
+                      ),
+                      title: Container(
+                        margin: EdgeInsets.only(bottom: 5.h),
+                        child: Text(
+                          item.title,
+                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
-                        title: Container(
-                          margin: EdgeInsets.only(bottom: 5.h),
-                          child: Text(
-                            item.title,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ),
-                        subtitle: Text(
-                          item.description,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 14.sp),
-                        ),
-                        trailing: item == selectedGateway
-                            ? Image.asset(
-                                "assets/icons/check.png",
-                                width: 24.w,
-                                color: AppColors.successColor,
-                              )
-                            : const SizedBox()),
+                      ),
+                      subtitle: Text(
+                        item.description,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .copyWith(fontSize: 14.sp),
+                      ),
+                      trailing: item == selectedGateway
+                          ? Image.asset(
+                              "assets/icons/check.png",
+                              width: 24.w,
+                              color: AppColors.successColor,
+                            )
+                          : const SizedBox(),
+                    ),
                   ),
                 );
               },
