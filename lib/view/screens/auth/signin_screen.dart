@@ -9,6 +9,7 @@ import 'package:therapify/view/screens/auth/signin_doctor_screen.dart';
 import 'package:therapify/view/screens/auth/signup_screen.dart';
 import 'package:therapify/view/screens/forgot_password/password_reset_email.dart';
 import 'package:therapify/view/widgets/app_button.dart';
+import 'package:therapify/view/widgets/bottom_nav.dart';
 import 'package:therapify/view/widgets/input_decoration.dart';
 import 'package:therapify/view/widgets/spacing.dart';
 
@@ -52,7 +53,7 @@ class _SignInScreenState extends State<SignInScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => const BottomAppBar(),
+          builder: (_) => const BottomNavbar(),
         ),
       );
     } catch (e) {
@@ -253,13 +254,13 @@ class _SignInScreenState extends State<SignInScreen> {
                         const Text("Don't have an account? "),
                         InkWell(
                           onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const SignUpScreen(),
-                        ),
-                      );
-                    },
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const SignUpScreen(),
+                              ),
+                            );
+                          },
                           child: Text(
                             "Sign Up".tr,
                             style: Theme.of(context)

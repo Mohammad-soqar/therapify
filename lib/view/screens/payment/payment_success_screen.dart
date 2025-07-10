@@ -18,6 +18,7 @@ class PaymentSuccessScreen extends StatelessWidget {
     final DoctorModel doctor = Get.arguments['doctor'];
     final String selectedDate = Get.arguments['selectedDate'];
     final String selectedTime = Get.arguments['selectedTime'];
+    final String patientId = Get.arguments['patientId'];
 
     final totalFee = doctor.consultationFee + doctor.consultationFee * 0.07 + 0.5;
 
@@ -117,14 +118,14 @@ class PaymentSuccessScreen extends StatelessWidget {
             VSpace(30.h),
             AppButton(
               title: "See Appointment",
-              onPress: () => Get.to(() => const AppointmentListScreen()),
+              onPress: () => Get.to(() =>  AppointmentListScreen(patientId: patientId,)),
               bgColor: AppColors.primaryColor,
               width: double.infinity,
             ),
             VSpace(20.h),
             AppButton(
               title: "Return Home",
-              onPress: () => Get.offAllNamed('/bottomNav'),
+              onPress: () => Navigator.popUntil(context, (route) => route.isFirst),
               bgColor: AppColors.getContainerColor(),
               width: double.infinity,
               textColor: AppColors.getTitleColor(),

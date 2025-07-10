@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:therapify/res/themes/theme_service.dart';
 import 'package:therapify/view/screens/appointment/appointment_list_screen.dart';
@@ -21,6 +22,8 @@ class BottomNavbar extends StatefulWidget {
 }
 
 class _BottomNavbarState extends State<BottomNavbar> {
+      final uid = FirebaseAuth.instance.currentUser!.uid;
+
   ThemeService themeService = Get.put(ThemeService());
   int _currentIndex = 0;
 
@@ -63,7 +66,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const AppointmentListScreen(),
+                  builder: (_) =>  AppointmentListScreen(patientId: uid,),
                 ),
               );
             },

@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:therapify/data/models/DoctorModel.dart';
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/view/widgets/app_button.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:therapify/viewmodels/appointment_viewmodel.dart';
 import 'package:therapify/view/screens/payment/payment_success_screen.dart';
 
 class PaymentPreviewScreen extends StatelessWidget {
@@ -27,6 +29,7 @@ class PaymentPreviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final vm = Provider.of<AppointmentViewmodel>(context);
     final double vat = doctor.consultationFee * 0.07;
     final double platformFee = 0.5;
     final double total = doctor.consultationFee + vat + platformFee;
@@ -59,11 +62,11 @@ class PaymentPreviewScreen extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(5.r),
                       child: Image.network(
-                            (doctor.imageUrl != null && doctor.imageUrl!.isNotEmpty)
-                                ? doctor.imageUrl!
-                                : "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
-                            fit: BoxFit.contain,
-                          ),
+                        (doctor.imageUrl != null && doctor.imageUrl!.isNotEmpty)
+                            ? doctor.imageUrl!
+                            : "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                   HSpace(15.w),
@@ -84,7 +87,8 @@ class PaymentPreviewScreen extends StatelessWidget {
                         if (doctor.rating != null)
                           Row(
                             children: [
-                              Icon(CupertinoIcons.star_fill, color: AppColors.warningColor, size: 14.sp),
+                              Icon(CupertinoIcons.star_fill,
+                                  color: AppColors.warningColor, size: 14.sp),
                               HSpace(5.w),
                               Text(
                                 "${doctor.rating!.toStringAsFixed(1)}",
@@ -120,7 +124,8 @@ class PaymentPreviewScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Appointment Info", style: Theme.of(context).textTheme.titleMedium),
+                  Text("Appointment Info",
+                      style: Theme.of(context).textTheme.titleMedium),
                   VSpace(10.h),
                   Text("Patient: $patientId"),
                   Text("Date: $selectedDate"),
@@ -141,7 +146,8 @@ class PaymentPreviewScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Payment Details", style: Theme.of(context).textTheme.titleMedium),
+                  Text("Payment Details",
+                      style: Theme.of(context).textTheme.titleMedium),
                   VSpace(10.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -155,7 +161,8 @@ class PaymentPreviewScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text("VAT (7%)"),
-                      Text("\$${vat.toStringAsFixed(2)}", style: TextStyle(color: AppColors.dangerColor)),
+                      Text("\$${vat.toStringAsFixed(2)}",
+                          style: TextStyle(color: AppColors.dangerColor)),
                     ],
                   ),
                   VSpace(10.h),
@@ -169,8 +176,10 @@ class PaymentPreviewScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Total", style: Theme.of(context).textTheme.bodyLarge),
-                      Text("\$${total.toStringAsFixed(2)}", style: Theme.of(context).textTheme.bodyLarge),
+                      Text("Total",
+                          style: Theme.of(context).textTheme.bodyLarge),
+                      Text("\$${total.toStringAsFixed(2)}",
+                          style: Theme.of(context).textTheme.bodyLarge),
                     ],
                   ),
                 ],
@@ -180,7 +189,9 @@ class PaymentPreviewScreen extends StatelessWidget {
             VSpace(25.h),
             AppButton(
               title: "Payment Now",
-              onPress: () {
+              onPress: () async {
+                await vm.addAppointment(
+                    doctor.doctorId, patientId, selectedDate, selectedTime);
                 Get.to(
                   () => const PaymentSuccessScreen(),
                   arguments: {

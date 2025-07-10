@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final AppController appController = Get.find<AppController>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _searchController = TextEditingController();
+    final uid = FirebaseAuth.instance.currentUser!.uid;
 
   void openDrawer() {
     scaffoldKey.currentState?.openDrawer();
@@ -196,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => const AppointmentListScreen()));
+                            builder: (_) =>  AppointmentListScreen(patientId: uid,)));
                   },
                   child: Text(
                     "See All",

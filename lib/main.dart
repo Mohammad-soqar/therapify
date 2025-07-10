@@ -14,6 +14,7 @@ import 'package:therapify/view/screens/home/home_screen.dart';
 import 'package:therapify/view/widgets/bottom_nav.dart';
 import 'package:therapify/viewmodels/controllers/app_controller.dart';
 import 'package:therapify/viewmodels/doctor_list_viewmodel.dart';
+import 'package:therapify/viewmodels/appointment_viewmodel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +25,15 @@ void main() async {
   await ScreenUtil.ensureScreenSize();
   await GetStorage.init();
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AppointmentViewmodel()),
+        ChangeNotifierProvider(create: (_) => DoctorListViewModel()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
