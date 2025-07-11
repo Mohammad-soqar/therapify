@@ -8,6 +8,7 @@ import 'package:therapify/data/static/department_data.dart';
 import 'package:therapify/data/static/doctor_data.dart';
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/utils/utils.dart';
+import 'package:therapify/utils/whatsapp_launcher.dart';
 import 'package:therapify/view/screens/appointment/appointment_list_screen.dart';
 import 'package:therapify/view/screens/department/department_item.dart';
 import 'package:therapify/view/screens/doctor/doctor_filter_sheet.dart';
@@ -21,6 +22,7 @@ import 'package:therapify/view/widgets/spacing.dart';
 import 'package:therapify/viewmodels/controllers/app_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:therapify/viewmodels/doctor_list_viewmodel.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -33,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final AppController appController = Get.find<AppController>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _searchController = TextEditingController();
-    final uid = FirebaseAuth.instance.currentUser!.uid;
+  final uid = FirebaseAuth.instance.currentUser!.uid;
 
   void openDrawer() {
     scaffoldKey.currentState?.openDrawer();
@@ -127,17 +129,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     const NotificationButton(notificationCount: 2),
                     SizedBox(width: 8.w),
-                    IconButton(
-                      icon: Icon(Icons.message_rounded,
-                          color: AppColors.getTextColor()),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const MessagesScreen()),
-                        );
-                      },
-                    ),
                   ],
                 ),
               ],
@@ -149,19 +140,41 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 children: [
                   Expanded(
-                    child: TextFormField(
-                      controller: _searchController,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      decoration: AppInputDecoration.roundInputDecoration(
-                        context: context,
-                        hintText: 'Search here',
-                        fillColor: AppColors.getContainerColor(),
-                        borderColor: AppColors.primaryColor
-                            .withAlpha((0.2 * 255).toInt()),
-                        prefixIcon: Image.asset(
+                    child: InkWell(
+                      onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const DoctorListScreen(),
+                        ),
+                      );
+                    },
+                      child: Container(
+                      height: 50.h,
+                      decoration: BoxDecoration(
+                        color: AppColors.getContainerColor(),
+                        borderRadius: BorderRadius.circular(10.r),
+                        border: Border.all(
+                        color: AppColors.primaryColor.withAlpha((0.2 * 255).toInt()),
+                        ),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Row(
+                        children: [
+                        Image.asset(
                           "assets/icons/search.png",
                           color: AppColors.getTextColor2(),
                         ),
+                        SizedBox(width: 10.w),
+                        Text(
+                          'Search here',
+                          style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .copyWith(color: AppColors.getTextColor2()),
+                        ),
+                        ],
+                      ),
                       ),
                     ),
                   ),
@@ -197,7 +210,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) =>  AppointmentListScreen(patientId: uid,)));
+                            builder: (_) => AppointmentListScreen(
+                                  patientId: uid,
+                                )));
                   },
                   child: Text(
                     "See All",
@@ -317,16 +332,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 InkWell(
-onTap: () {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider(
-            create: (_) => DoctorListViewModel(),
-            child: const DoctorListScreen(),
-          ),
-      ),
-  );
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ChangeNotifierProvider(
+                          create: (_) => DoctorListViewModel(),
+                          child: const DoctorListScreen(),
+                        ),
+                      ),
+                    );
                   },
                   child: Text(
                     "See All",
@@ -394,15 +409,15 @@ class SpecialistsSection extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-Navigator.push(
-    context,
-    MaterialPageRoute(
-        builder: (_) => ChangeNotifierProvider(
-          create: (_) => DoctorListViewModel(),
-          child: const DoctorListScreen(),
-        ),
-    ),
-);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChangeNotifierProvider(
+                      create: (_) => DoctorListViewModel(),
+                      child: const DoctorListScreen(),
+                    ),
+                  ),
+                );
               },
               child: Text(
                 "See All",

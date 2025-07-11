@@ -70,27 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: CustomAppbar(
         title: "Profile",
-        leading: [
-          InkWell(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              width: 38.r,
-              height: 38.r,
-              padding: EdgeInsets.all(8.r),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50.r),
-                border: Border.all(color: AppColors.getBorderColor()),
-              ),
-              child: Icon(
-                appController.isRtl()
-                    ? CupertinoIcons.arrow_right
-                    : CupertinoIcons.arrow_left,
-                color: AppColors.getTitleColor(),
-                size: 18.sp,
-              ),
-            ),
-          )
-        ],
+        
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.r),

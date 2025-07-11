@@ -18,6 +18,7 @@ class PaymentPreviewScreen extends StatelessWidget {
   final String selectedDate;
   final String selectedTime;
   final String patientId;
+  final String description;
 
   const PaymentPreviewScreen({
     super.key,
@@ -25,6 +26,7 @@ class PaymentPreviewScreen extends StatelessWidget {
     required this.selectedDate,
     required this.selectedTime,
     required this.patientId,
+    required this.description,
   });
 
   @override
@@ -191,7 +193,7 @@ class PaymentPreviewScreen extends StatelessWidget {
               title: "Payment Now",
               onPress: () async {
                 await vm.addAppointment(
-                    doctor.doctorId, patientId, selectedDate, selectedTime);
+                    doctor.doctorId, patientId, selectedDate, selectedTime , description);
                 Get.to(
                   () => const PaymentSuccessScreen(),
                   arguments: {

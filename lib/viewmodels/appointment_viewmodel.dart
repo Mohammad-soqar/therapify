@@ -16,6 +16,7 @@ class AppointmentViewmodel extends ChangeNotifier {
     String patientId,
     String appointmentDate,
     String appointmentTime,
+    String description, // Added description parameter
   ) async {
     isLoading = true;
     notifyListeners();
@@ -25,6 +26,7 @@ class AppointmentViewmodel extends ChangeNotifier {
         doctorName: '', // This can be set later if needed
         patientName: '', // This can be set later if needed
         patientId: patientId,
+        description: description,
         appointmentTime: appointmentTime,
         appointmentDate: appointmentDate,
         createdTime: DateTime.now(),
