@@ -1,11 +1,18 @@
 import 'package:url_launcher/url_launcher.dart';
 
-Future<void> openWhatsAppChat(String phoneNumber, {String message = ''}) async {
+Future<void> openWhatsAppChat(String? phoneNumber,
+    {String message = ''}) async {
   // Remove the '+' if it exists and encode the message
-  final formattedPhone = phoneNumber.replaceAll('+', '').replaceAll(' ', '');
+  final formattedPhone = phoneNumber?.replaceAll('+', '').replaceAll(' ', '');
   final encodedMessage = Uri.encodeComponent(message);
+  final Uri url;
 
-  final Uri url = Uri.parse('https://wa.me/$formattedPhone?text=$encodedMessage');
+  if (formattedPhone == null || formattedPhone.isEmpty) {
+    url = Uri.parse('https://wa.me/');
+  } else {
+   url =
+        Uri.parse('https://wa.me/$formattedPhone?text=$encodedMessage');
+  }
 
   if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
     // Show a dialog or snackbar for user feedback

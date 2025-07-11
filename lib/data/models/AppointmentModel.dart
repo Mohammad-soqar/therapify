@@ -5,6 +5,7 @@ class AppointmentModel {
   final String patientName; // Optional, can be fetched later
   final String doctorId;
   final String doctorName;
+  final String description;
   final String appointmentDate;
   final String appointmentTime;
   final DateTime createdTime;
@@ -15,6 +16,7 @@ class AppointmentModel {
     required this.patientName,
     required this.doctorId,
     required this.doctorName,
+    required this.description,
     required this.appointmentDate,
     required this.appointmentTime,
     required this.createdTime,
@@ -27,6 +29,7 @@ class AppointmentModel {
       doctorName: json['doctorName'],
       patientId: json['patientId'],
       doctorId: json['doctorId'],
+      description: json['description'] ?? '',
       appointmentDate: json['appointmentDate'],
       appointmentTime: json['appointmentTime'],
       createdTime: DateTime.parse(json['createdTime']),
@@ -39,6 +42,7 @@ class AppointmentModel {
         'patientName': patientName,
         'doctorName': doctorName,
         'doctorId': doctorId,
+        'description': description,
         'appointmentDate': appointmentDate,
         'appointmentTime': appointmentTime,
         'createdTime': createdTime.toIso8601String(),

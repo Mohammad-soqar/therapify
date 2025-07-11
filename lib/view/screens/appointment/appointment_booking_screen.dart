@@ -201,6 +201,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
                           selectedDate: _selectedDate.date,
                           selectedTime: _selectedTimeSlot,
                           patientId: patientId!, // ✅ added this
+                          description: _messageController.text.trim(), // ✅ added this
                         );
                       }
                     },
