@@ -12,6 +12,7 @@ class PaymentScreen extends StatefulWidget {
   final String selectedDate;
   final String selectedTime;
   final String patientName;
+  final String description; // ✅ NEW
 
   const PaymentScreen({
     super.key,
@@ -19,6 +20,7 @@ class PaymentScreen extends StatefulWidget {
     required this.selectedDate,
     required this.selectedTime,
     required this.patientName,
+    required this.description, // ✅ NEW
   });
 
   @override
@@ -56,6 +58,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       selectedDate: widget.selectedDate,
                       selectedTime: widget.selectedTime,
                       patientId: widget.patientName, // ✅ passed properly now
+                      description: widget.description
                     );
                   },
                   child: Container(

@@ -13,7 +13,8 @@ void showCustomModalBottomSheet(
   required DoctorModel doctor,
   required String selectedDate,
   required String selectedTime,
-  required String patientId,        // ✅ NEW
+  required String patientId, 
+  required String description,
 }) {
   bool isRemember = false;
 
@@ -88,6 +89,7 @@ void showCustomModalBottomSheet(
                       selectedDate: selectedDate,
                       selectedTime: selectedTime,
                       patientId: patientId, 
+                      description: description, // Add description if needed
                     ),
                   ),
                 );

@@ -12,10 +12,8 @@ import 'package:therapify/view/widgets/spacing.dart';
 import 'package:therapify/viewmodels/doctor_list_viewmodel.dart';
 
 class DoctorListScreen extends StatefulWidget {
-  final bool showBackButton; // <-- NEW
-
-  const DoctorListScreen(
-      {super.key, this.showBackButton = true}); // <-- default to true
+  final bool showBackButton;
+  const DoctorListScreen({super.key, this.showBackButton = true});
 
   @override
   State<DoctorListScreen> createState() => _DoctorListScreenState();
@@ -29,10 +27,14 @@ class _DoctorListScreenState extends State<DoctorListScreen>
   @override
   void initState() {
     super.initState();
-    _tabController =
-        TabController(length: medicalDepartmentData.length, vsync: this);
+    _tabController = TabController(
+      length: medicalDepartmentData.length,
+      vsync: this,
+    );
+
     _tabController.addListener(() {
-      setState(() {});
+    
+      setState(() {}); // for tab UI
     });
   }
 
@@ -45,7 +47,7 @@ class _DoctorListScreenState extends State<DoctorListScreen>
 
   @override
   Widget build(BuildContext context) {
-    final doctorViewModel = Provider.of<DoctorListViewModel>(context);
+    final vm = Provider.of<DoctorListViewModel>(context);
 
     return Scaffold(
       appBar: CustomAppbar(
@@ -54,21 +56,22 @@ class _DoctorListScreenState extends State<DoctorListScreen>
       ),
       body: Column(
         children: [
-          Container(
+          // — Search + Filter row
+          Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
             child: Row(
               children: [
                 Expanded(
                   child: TextFormField(
                     controller: _searchController,
-                    onChanged: doctorViewModel.searchDoctors,
+                    onChanged: vm.searchDoctors,
                     style: Theme.of(context).textTheme.bodyMedium,
                     decoration: AppInputDecoration.roundInputDecoration(
                       context: context,
                       hintText: 'Search',
                       fillColor: AppColors.getContainerColor(),
-                      borderColor:
-                          AppColors.primaryColor.withAlpha((0.2 * 255).toInt()),
+                      borderColor: AppColors.primaryColor
+                          .withAlpha((0.2 * 255).toInt()),
                       prefixIcon: Image.asset(
                         "assets/icons/search.png",
                         color: AppColors.getTextColor(),
@@ -96,67 +99,61 @@ class _DoctorListScreenState extends State<DoctorListScreen>
               ],
             ),
           ),
+
+          // — Department Tabs
           VSpace(5.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 15.w),
             child: TabBar(
               controller: _tabController,
-              dividerColor: Colors.transparent,
-              indicatorColor: Colors.transparent,
-              labelPadding: EdgeInsets.symmetric(horizontal: 5.w),
               isScrollable: true,
-              tabAlignment: TabAlignment.start,
+              indicatorColor: Colors.transparent,
               labelColor: AppColors.primaryColor,
-              tabs: medicalDepartmentData.asMap().entries.map((entry) {
-                Department department = entry.value;
-                bool isActive = _tabController.index == entry.key;
+              dividerColor: Colors.transparent,
+              tabs: medicalDepartmentData.asMap().entries.map((e) {
+                final dept = e.value;
+                final active = _tabController.index == e.key;
                 return Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                   decoration: BoxDecoration(
-                    color: isActive
+                    color: active
                         ? AppColors.primaryColor
                         : AppColors.getContainerColor(),
                     borderRadius: BorderRadius.circular(6.r),
                   ),
                   child: Text(
-                    department.title,
+                    dept.title,
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: isActive
-                              ? AppColors.whiteColor
-                              : AppColors.getTitleColor(),
+                          color:
+                              active ? AppColors.whiteColor : AppColors.getTitleColor(),
                         ),
                   ),
                 );
               }).toList(),
             ),
           ),
+
+          // — Doctor List
           Expanded(
-            child: doctorViewModel.isLoading
+            child: vm.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : _buildDoctorList(context, doctorViewModel),
+                : _buildDoctorList(vm),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDoctorList(BuildContext context, DoctorListViewModel viewModel) {
-    final doctors = viewModel.doctors;
-
-    if (doctors.isEmpty) {
-      return Container(
-        padding: EdgeInsets.all(20.r),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset("assets/images/no_appointment.png", width: 180.w),
-              VSpace(20.h),
-              Text("No Doctor Found!",
-                  style: Theme.of(context).textTheme.titleMedium),
-            ],
-          ),
+  Widget _buildDoctorList(DoctorListViewModel vm) {
+    if (vm.doctors.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset("assets/images/no_appointment.png", width: 180.w),
+            VSpace(20.h),
+            Text("No Doctor Found!", style: Theme.of(context).textTheme.titleMedium),
+          ],
         ),
       );
     }
@@ -164,14 +161,10 @@ class _DoctorListScreenState extends State<DoctorListScreen>
     return SingleChildScrollView(
       padding: EdgeInsets.all(20.r),
       child: ListView.builder(
-        padding: EdgeInsets.zero,
-        physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
-        itemCount: doctors.length,
-        itemBuilder: (context, index) {
-          final item = doctors[index];
-          return DoctorItem(item: item);
-        },
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: vm.doctors.length,
+        itemBuilder: (_, idx) => DoctorItem(item: vm.doctors[idx]),
       ),
     );
   }

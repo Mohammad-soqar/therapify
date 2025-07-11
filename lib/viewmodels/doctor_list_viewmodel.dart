@@ -7,7 +7,10 @@ class DoctorListViewModel extends ChangeNotifier {
 
   List<DoctorModel> _allDoctors = [];
   List<DoctorModel> _filteredDoctors = [];
-  bool _isLoading = true;
+  bool _isLoading = false;
+
+  // current filters
+  String _searchQuery = '';
 
   List<DoctorModel> get doctors => _filteredDoctors;
   bool get isLoading => _isLoading;
@@ -34,14 +37,25 @@ class DoctorListViewModel extends ChangeNotifier {
     ;
   }
 
+  /// Called by the search field `onChanged`
   void searchDoctors(String query) {
-    if (query.isEmpty) {
-      _filteredDoctors = _allDoctors;
-    } else {
-      _filteredDoctors = _allDoctors
-          .where((doc) => doc.name.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+    _searchQuery = query;
+    _applyFilters();
+  }
+
+  void _applyFilters() {
+    var list = _allDoctors;
+
+
+
+    // 2) filter by name search
+    if (_searchQuery.isNotEmpty) {
+      list = list.where((doc) {
+        return doc.name.toLowerCase().contains(_searchQuery.toLowerCase());
+      }).toList();
     }
+
+    _filteredDoctors = list;
     notifyListeners();
   }
 }
