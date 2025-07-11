@@ -8,6 +8,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'doctor_dashboard_viewmodel.dart';
+import 'package:therapify/view/screens/doctor_dashboard/doctor_dashboard_model.dart';
+import 'package:intl/intl.dart';
 
 class DoctorDashboardView extends StatelessWidget {
   const DoctorDashboardView({super.key});
@@ -93,9 +100,7 @@ class DashboardTab extends StatelessWidget {
               _StatCard(
                   label: "Appointments",
                   value: stats.totalAppointments.toString()),
-              _StatCard(
-                  label: "Earnings",
-                  value: "\$${stats.totalEarnings.toStringAsFixed(0)}"),
+              
             ],
           ),
           const SizedBox(height: 20),
@@ -184,6 +189,7 @@ class AppointmentsTab extends StatelessWidget {
       itemCount: appointments.length,
       itemBuilder: (context, index) {
         final appt = appointments[index];
+
         final formattedDate =
             "${appt.dateTime.day}/${appt.dateTime.month}/${appt.dateTime.year}";
         final formattedTime =
@@ -194,12 +200,12 @@ class AppointmentsTab extends StatelessWidget {
           child: ListTile(
             leading: const Icon(Icons.calendar_today),
             title: Text(appt.patientName),
-            subtitle: Text("Date: $formattedDate\nTime: $formattedTime"),
+            subtitle: Text("Date: $formattedDate\nTime: $formattedTime\n\n${appt.description ?? ''}"),
             isThreeLine: true,
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Open appointment detail coming soon.")),
+                const SnackBar(content: Text("Open appointment detail coming soon.")),
               );
             },
           ),
@@ -208,6 +214,7 @@ class AppointmentsTab extends StatelessWidget {
     );
   }
 }
+
 // ✅ PATIENTS TAB
 class PatientsTab extends StatelessWidget {
   const PatientsTab({super.key});

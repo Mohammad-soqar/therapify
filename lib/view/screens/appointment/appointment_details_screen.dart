@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/utils/utils.dart';
-import 'package:therapify/view/screens/appointment/appointment_countdown_screen.dart';
+import 'package:therapify/utils/whatsapp_launcher.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/appbar.dart';
 import 'package:therapify/view/widgets/back_button.dart';
@@ -38,16 +38,20 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
           color: AppColors.getContainerColor(),
           boxShadow: Utils.defaultBoxShadow(),
         ),
-        child: AppButton(
-          title: "Video Call (Start at ${appointment['appointmentTime'] ?? 'Unknown'})",
-          onPress: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const AppointmentCountdownScreen()),
-            );
-          },
-          bgColor: AppColors.primaryColor,
-          icon: const Icon(Icons.videocam, color: AppColors.whiteColor),
+        child: Expanded(
+          child: AppButton(
+            title: "Text Doctor Now",
+            onPress: () {
+              final phone = appointment['doctorPhone'] ?? '';
+              final name = appointment['doctorName'] ?? 'Doctor';
+              openWhatsAppChat(
+                phone,
+                message: "Hello Dr. $name, I’d like to talk now.",
+              );
+            },
+            bgColor: AppColors.successColor,
+            icon: const Icon(Icons.videocam, color: AppColors.whiteColor),
+          ),
         ),
       ),
       appBar: const CustomAppbar(
@@ -152,8 +156,10 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
             VSpace(8.h),
             Row(
               children: [
-                Container(constraints: BoxConstraints(minWidth: 120.w), child: const Text("Gender:")),
-                Text(": ${appointment['patientGender'] ?? 'Unknown'}"),
+                Container(constraints: BoxConstraints(minWidth: 120.w), child: const Text("Issue:")),
+                Expanded(
+                  child: Text(": ${appointment['description'] ?? 'Not specified'}"),
+                ),
               ],
             ),
 

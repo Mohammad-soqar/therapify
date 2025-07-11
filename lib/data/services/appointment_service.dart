@@ -42,6 +42,13 @@ class AppointmentService {
       .doc(docRef.id)
       .set(appointmentData);
 
+       await _db
+      .collection('doctors')
+      .doc(appointment.doctorId)
+      .collection('appointments')
+      .doc(docRef.id)
+      .set(appointmentData);
+
     return docRef;
   }
 
