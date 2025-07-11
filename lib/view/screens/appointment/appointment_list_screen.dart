@@ -125,39 +125,39 @@ class _AppointmentListScreenState extends State<AppointmentListScreen>
   }
 
   Widget _buildTab(String type) {
-    final now = DateTime.now();
-    final filtered = _appointments.where((a) {
-      final date = DateTime.tryParse(a.appointmentDate ?? "") ?? now;
-      return type == "Upcoming" ? date.isAfter(now) : date.isBefore(now);
-    }).toList();
+  final now = DateTime.now();
+  final filtered = _appointments.where((a) {
+    final date = DateTime.tryParse(a.appointmentDate ?? "") ?? now;
+    return type == "Upcoming" ? date.isAfter(now) : date.isBefore(now);
+  }).toList();
 
-    if (filtered.isEmpty) {
-      return _buildEmptyState();
-    }
-
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(20.r),
-      child: ListView.builder(
-        padding: EdgeInsets.zero,
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: filtered.length,
-        itemBuilder: (context, index) {
-          final item = filtered[index];
-          return InkWell(
-            onTap: () {
-              if (type == "Upcoming") {
-                Get.to(() => const AppointmentDetailsScreen());
-              } else {
-                Get.to(() => const AppointmentHistoryScreen());
-              }
-            },
-            child: AppointmentItemReal(item: item),
-          );
-        },
-      ),
-    );
+  if (filtered.isEmpty) {
+    return _buildEmptyState();
   }
+
+  return SingleChildScrollView(
+    padding: EdgeInsets.all(20.r),
+    child: ListView.builder(
+      padding: EdgeInsets.zero,
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: filtered.length,
+      itemBuilder: (context, index) {
+        final item = filtered[index];
+        return InkWell(
+          onTap: () {
+            if (type == "Upcoming") {
+              Get.to(() => AppointmentDetailsScreen(appointment: item.toJson()));
+            } else {
+              Get.to(() => const AppointmentHistoryScreen());
+            }
+          },
+          child: AppointmentItemReal(item: item),
+        );
+      },
+    ),
+  );
+}
 
   Widget _buildEmptyState() {
     return Container(
