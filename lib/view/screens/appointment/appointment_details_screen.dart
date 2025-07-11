@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:therapify/res/colors/app_colors.dart';
 import 'package:therapify/utils/utils.dart';
-import 'package:therapify/view/screens/appointment/appointment_countdown_screen.dart';
+import 'package:therapify/utils/whatsapp_launcher.dart';
 import 'package:therapify/view/widgets/app_button.dart';
 import 'package:therapify/view/widgets/appbar.dart';
 import 'package:therapify/view/widgets/back_button.dart';
@@ -17,8 +17,7 @@ class AppointmentDetailsScreen extends StatefulWidget {
   const AppointmentDetailsScreen({super.key, required this.appointment});
 
   @override
-  State<AppointmentDetailsScreen> createState() =>
-      _AppointmentDetailsScreenState();
+  State<AppointmentDetailsScreen> createState() => _AppointmentDetailsScreenState();
 }
 
 class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
@@ -39,18 +38,20 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
           color: AppColors.getContainerColor(),
           boxShadow: Utils.defaultBoxShadow(),
         ),
-        child: AppButton(
-          title:
-              "Video Call (Start at ${appointment['appointmentTime'] ?? 'Unknown'})",
-          onPress: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => const AppointmentCountdownScreen()),
-            );
-          },
-          bgColor: AppColors.primaryColor,
-          icon: const Icon(Icons.videocam, color: AppColors.whiteColor),
+        child: Expanded(
+          child: AppButton(
+            title: "Text Doctor Now",
+            onPress: () {
+              final phone = appointment['doctorPhone'] ?? '';
+              final name = appointment['doctorName'] ?? 'Doctor';
+              openWhatsAppChat(
+                phone,
+                message: "Hello Dr. $name, I’d like to talk now.",
+              );
+            },
+            bgColor: AppColors.successColor,
+            icon: const Icon(Icons.videocam, color: AppColors.whiteColor),
+          ),
         ),
       ),
       appBar: const CustomAppbar(
@@ -75,8 +76,7 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
                     width: 100.r,
                     height: 100.r,
                     decoration: BoxDecoration(
-                      color:
-                          AppColors.primaryColor.withAlpha((0.3 * 255).toInt()),
+                      color: AppColors.primaryColor.withAlpha((0.3 * 255).toInt()),
                       borderRadius: BorderRadius.circular(5.r),
                     ),
                     child: ClipRRect(
@@ -94,25 +94,20 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
                       children: [
                         Text(
                           "Dr. ${appointment['doctorName'] ?? 'Unknown'}",
-                          style:
-                              Theme.of(context).textTheme.titleMedium!.copyWith(
-                                    color: AppColors.getTitleColor(),
-                                  ),
+                          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                color: AppColors.getTitleColor(),
+                              ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         VSpace(8.h),
                         Row(
                           children: [
-                            Icon(CupertinoIcons.star_fill,
-                                color: AppColors.warningColor, size: 14.sp),
+                            Icon(CupertinoIcons.star_fill, color: AppColors.warningColor, size: 14.sp),
                             HSpace(5.w),
                             Text(
                               "${appointment['rating'] ?? '4.6'} (${appointment['reviews'] ?? '26'} reviews)",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(
+                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                                     fontSize: 14.sp,
                                     color: AppColors.getTitleColor(),
                                   ),
@@ -145,8 +140,7 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 HSpace(10.w),
-                Text("(Morning Slot)",
-                    style: Theme.of(context).textTheme.bodySmall),
+                Text("(Morning Slot)", style: Theme.of(context).textTheme.bodySmall),
               ],
             ),
 
@@ -155,19 +149,17 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
             VSpace(16.h),
             Row(
               children: [
-                Container(
-                    constraints: BoxConstraints(minWidth: 120.w),
-                    child: const Text("Full Name:")),
+                Container(constraints: BoxConstraints(minWidth: 120.w), child: const Text("Full Name:")),
                 Text(": ${appointment['patientName'] ?? ''}"),
               ],
             ),
             VSpace(8.h),
             Row(
               children: [
-                Container(
-                    constraints: BoxConstraints(minWidth: 120.w),
-                    child: const Text("Gender:")),
-                Text(": ${appointment['patientGender'] ?? 'Unknown'}"),
+                Container(constraints: BoxConstraints(minWidth: 120.w), child: const Text("Issue:")),
+                Expanded(
+                  child: Text(": ${appointment['description'] ?? 'Not specified'}"),
+                ),
               ],
             ),
 
@@ -181,15 +173,13 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
                 borderRadius: BorderRadius.circular(10.r),
               ),
               child: ListTile(
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 15.r, vertical: 5.h),
+                contentPadding: EdgeInsets.symmetric(horizontal: 15.r, vertical: 5.h),
                 leading: Container(
                   width: 50.h,
                   height: 50.h,
                   padding: EdgeInsets.all(12.r),
                   decoration: BoxDecoration(
-                    color:
-                        AppColors.primaryColor.withAlpha((0.1 * 255).toInt()),
+                    color: AppColors.primaryColor.withAlpha((0.1 * 255).toInt()),
                     borderRadius: BorderRadius.circular(5.r),
                   ),
                   child: Image.asset(
@@ -200,8 +190,7 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
                 ),
                 title: Container(
                   margin: EdgeInsets.only(bottom: 8.h),
-                  child: Text("Video Call",
-                      style: Theme.of(context).textTheme.bodyLarge),
+                  child: Text("Video Call", style: Theme.of(context).textTheme.bodyLarge),
                 ),
                 subtitle: Text(
                   "Able to video chat with the doctor",
@@ -212,19 +201,13 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
                 trailing: Column(
                   children: [
                     Text(
-                      "\$${(appointment['consultationFee'] ?? 0).toInt()}",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: AppColors.primaryColor),
+                      "\$${appointment['consultationFee'] ?? '20'}",
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.primaryColor),
                     ),
                     VSpace(8.h),
                     Text(
                       "Paid",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: AppColors.successColor),
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.successColor),
                     ),
                   ],
                 ),

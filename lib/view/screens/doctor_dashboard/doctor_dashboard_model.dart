@@ -14,26 +14,28 @@ class Patient {
 
 class Appointment {
   final String id;
+  final String patientId;
   final String patientName;
   final DateTime dateTime;
+   final String description;
 
   Appointment({
     required this.id,
+    required this.patientId,
     required this.patientName,
     required this.dateTime,
+    required this.description,
   });
 }
 
 class DashboardStats {
   final int totalPatients;
   final int totalAppointments;
-  final double totalEarnings;
   final bool isAvailable;
 
   DashboardStats({
     required this.totalPatients,
     required this.totalAppointments,
-    required this.totalEarnings,
     required this.isAvailable,
   });
 }
